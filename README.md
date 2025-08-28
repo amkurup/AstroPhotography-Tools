@@ -1,212 +1,139 @@
-# Akhil's Astrophotography Workflow Tool
+# Akhil's Astrophotography Tools
 
-A comprehensive, interactive web-based checklist guide for processing astrophotography data using Siril and related tools. This tool provides step-by-step workflows for different imaging scenarios and automatically saves your progress.
-
-## 🌟 Features
-
-- **Interactive Checklists**: Step-by-step guidance with progress tracking
-- **Multiple Workflows**: Support for dual-band, broadband, single-night, and multi-night sessions
-- **Intelligent Filtering**: Dynamic content based on your target type and setup
-- **Progress Persistence**: Your progress is automatically saved in your browser
-- **Project Management**: Save, load, and manage multiple imaging projects
-- **Advanced Search**: Find specific steps or techniques quickly
-- **Color Palette Generator**: Built-in formulas for dual-band image combination
-- **Smart Navigation**: "Next Step" button to jump to uncompleted items
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
-
-## 🚀 Getting Started
-
-### Quick Start
-1. Open the `akhils_siril_workflow.html` file in any modern web browser
-2. Configure your imaging scenario using the three dropdown selectors:
-   - **Filter**: Choose between Dual-Band or Broadband
-   - **Recommendation for**: Select your target type (nebula, galaxy, etc.)
-   - **Sessions**: Choose single night or multi-night workflow
-3. Follow the step-by-step checklist, checking off completed items
-4. Your progress is automatically saved as you work
-
-### Using the Interface
-
-#### Main Navigation
-- **Progress Bar**: Shows overall completion percentage at the top
-- **Search Bar**: Search for specific steps, tools, or techniques
-- **Next Step Button**: Fixed button (bottom-right) that jumps to your next uncompleted step
-
-#### Interactive Elements
-- **Checkboxes**: Click to mark steps as complete
-- **Phase Collapse/Expand**: Click the `+`/`−` buttons next to phase headers to show/hide sections
-- **Highlighted Terms**: Technical terms are highlighted in blue for easy identification
-- **Tip Boxes**: Blue informational boxes provide context and pro tips
-
-## 📁 Project Management
-
-### Creating Projects
-1. Click the `+` button next to "Project Manager" to expand the section
-2. Enter a descriptive name in the "Create a New Project" field (e.g., "M31 - August Session")
-3. Click "Clear for New Project" to start fresh
-4. Your project settings and progress will be automatically saved
-
-### Loading Existing Projects
-1. Expand the Project Manager section
-2. Select a project from the "Load Existing Project" dropdown
-3. Your previous progress and settings will be restored
-
-### Project Data Management
-
-#### Export/Import Features
-- **Export Selected**: Download the currently selected/active project as a JSON file
-- **Export All**: Download all your saved projects in one JSON file
-- **Import JSON**: Upload a previously exported JSON file to restore projects
-
-#### Data Storage
-- **Local Storage**: All data is stored in your browser's localStorage
-- **Privacy**: No data is sent to external servers - everything stays on your device
-- **Backup Recommended**: Use the Export feature to backup your projects before:
-  - Clearing browser data
-  - Switching computers
-  - Major browser updates
-
-### Managing Projects
-- **Delete Projects**: Select a project and click "Delete Selected Project"
-- **Clear Current**: Click "Clear for New Project" to reset the current session
-- **Reset Progress**: Use the "Reset Current Project Checklist" button at the bottom to clear all checkboxes
-
-## 🔍 Advanced Features
-
-### Search Functionality
-- **Real-time Search**: Type in the search bar to filter steps and phases
-- **Automatic Expansion**: Search results automatically expand collapsed phases
-- **Highlighting**: Matching terms are highlighted in yellow
-- **Clear Search**: Click "Clear" to reset and show all content
-
-### Smart Workflows
-The tool automatically adapts content based on your selections:
-
-#### Filter Types
-- **Dual-Band**: Workflows for narrowband filters (L-Extreme, DuoNarrowBand, etc.)
-- **Broadband**: Workflows for standard RGB/OSC imaging
-
-#### Target Recommendations
-- **Large, Diffuse Nebula**: Gentle processing parameters for soft nebulae
-- **Small/High-Detail Nebula**: More aggressive processing for detailed objects
-- **Galaxy/Star Cluster**: Specialized techniques for deep-sky objects
-
-#### Session Types
-- **Single Night**: Manual processing using Siril
-- **Multi Night**: Automated processing using Sirilic for session combination
-
-### Color Palette System (Dual-Band)
-When processing dual-band images, the tool provides:
-- **Pre-built Palettes**: Standard HOO, Custom HOO, SHO Hubble, etc.
-- **Copy Formulas**: One-click copying of Pixel Math formulas
-- **Descriptions**: Explanations of each palette's characteristics
-
-## 🛠️ Technical Details
-
-### Browser Compatibility
-- **Recommended**: Chrome, Firefox, Safari, Edge (latest versions)
-- **Minimum**: Any browser supporting ES6+ and localStorage
-- **Mobile**: Fully responsive design works on smartphones and tablets
-
-### Data Structure
-Projects are stored as JSON objects containing:
-```json
-{
-  "projectName": "Your Project Name",
-  "timestamp": "2025-08-27T...",
-  "checkboxStates": { /* checkbox completion states */ },
-  "uiPreferences": { /* filter selections, UI state */ }
-}
-```
-
-### File Structure
-- **Single File**: Everything is contained in `akhils_siril_workflow.html`
-- **No Dependencies**: No external libraries or internet connection required
-- **Portable**: Copy the file anywhere and it works immediately
-
-## 📋 Workflow Overview
-
-### Dual-Band Workflows
-1. **Calibration & Extraction**: File organization and channel separation
-2. **Master File Creation**: OIII and Ha processing with optional drizzle
-3. **Alignment & Processing**: Master alignment, background extraction, denoising
-4. **Color & Enhancement**: Palette application and final processing
-5. **Final Assembly**: Star processing and image composition
-
-### Broadband Workflows
-1. **Calibration**: Standard OSC preprocessing
-2. **Bayer Drizzle Stacking**: Advanced color reconstruction
-3. **Linear Processing**: Color calibration, background extraction, denoising
-4. **Enhancement**: StarNet++, stretching, sharpening
-5. **Final Assembly**: Star recomposition and final touches
-
-## 🎯 Best Practices
-
-### Project Organization
-- **Descriptive Names**: Use clear project names like "M42 - February 2025"
-- **Regular Exports**: Backup your projects monthly or before major browser changes
-- **Session Notes**: Use project names to track dates, conditions, equipment
-
-### Workflow Efficiency
-- **Use Search**: Find specific techniques quickly instead of scrolling
-- **Collapse Completed**: Collapse finished phases to focus on current work
-- **Next Step Button**: Use the FAB button to jump between uncompleted items
-- **Reference Appendix**: Check parameter recommendations in the appendix
-
-### Data Management
-- **Local Backups**: Export projects to your cloud storage or backup drive
-- **Cross-Device**: Import/export to move projects between computers
-- **Version Control**: Keep exports dated for different processing attempts
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-**Progress Not Saving**
-- Ensure cookies/localStorage are enabled in your browser
-- Check that you're not in private/incognito mode
-- Try refreshing the page to see if data persists
-
-**Projects Not Loading**
-- Verify the JSON file format is correct when importing
-- Check browser console (F12) for error messages
-- Clear localStorage and start fresh if corruption is suspected
-
-**Search Not Working**
-- Clear the search field and try again
-- Refresh the page if highlighting gets stuck
-- Use the "Clear" button to reset search state
-
-**Layout Issues**
-- Try zooming to 100% in your browser
-- Check if you're using a supported browser version
-- Disable browser extensions that might interfere with CSS
-
-### Browser Storage Limits
-- localStorage typically has a 5-10MB limit per domain
-- Each project uses approximately 5-10KB of storage
-- You can store hundreds of projects before reaching limits
-
-## 🤝 Contributing
-
-This tool is designed to be self-contained and easily customizable:
-
-### Customization
-- Edit the HTML file directly to modify workflows
-- Adjust CSS variables at the top of the `<style>` section for color schemes
-- Add new workflows by following the existing HTML structure patterns
-
-### Sharing
-- The tool works entirely offline - safe to share the HTML file
-- All user data stays local - no privacy concerns
-- Can be hosted on any web server or opened directly in browsers
-
-## 📄 License
-
-This tool is provided as-is for the astrophotography community. Feel free to modify, share, and improve upon it.
+Professional-grade tools for city astrophotography - intelligent target selection and streamlined image processing. Designed specifically for Bortle 9 light-polluted skies with comprehensive catalog integration and automated workflows.
 
 ---
 
-**Happy imaging! 🌌**
+## 🎯 Target Selector - Find Your Perfect Shot
 
-*For questions about astrophotography techniques, consult the Siril documentation, CloudyNights forums, or astrophotography communities.*
+**File:** `akhils_astro_target_selector.html`
+
+An intelligent recommendation system that matches deep-sky targets to your equipment, conditions, and skill level. Never wonder "what should I image tonight?" again.
+
+### Smart Features
+- **Universal Equipment Support**: Any focal length (200-5000mm) and camera sensor type
+- **Real-time Sky Calculations**: Automatic moon phase, altitude, and FOV analysis
+- **Intelligent Filtering**: Recommendations based on your setup and conditions
+- **Comprehensive Database**: 30+ targets from Sharpless, Messier, and NGC catalogs
+- **Bortle 9 Optimized**: Specifically designed for city imaging success
+- **Mobile Field Use**: Perfect planning companion for your smartphone
+
+### Quick Start
+1. Enter your focal length and camera type
+2. Set observation date (moon phase auto-calculated with visual display)
+3. Click "Find Targets" for intelligent recommendations
+4. Sort by altitude, difficulty, or brightness for your session
+
+### Catalog Integration
+- **Emission Nebulae**: Heart, Soul, North America, Veil, California, Rosette
+- **Sharpless Objects**: Wizard (Sh2-142), Elephant Trunk (Sh2-129), Tulip (Sh2-101), Bubble (Sh2-162)
+- **Planetary Nebulae**: Ring (M57), Dumbbell (M27), Helix, Cat's Eye
+- **Star Clusters**: Pleiades (M45), Double Cluster, Hyades
+- **Galaxies**: Andromeda (M31), Whirlpool (M51), selected bright targets
+
+### Smart Recommendations Include
+- **Equipment Match**: FOV analysis and framing advice (perfect/tight/wide)
+- **Filter Strategy**: Specific narrowband vs broadband recommendations
+- **Exposure Settings**: Gain and integration times optimized for Bortle 9
+- **Difficulty Ratings**: Beginner to advanced with specific challenges noted
+- **Seasonal Planning**: Best imaging months and altitude predictions
+- **Moon Compatibility**: Optimal lunar phases for each target
+
+---
+
+## 📋 Processing Workflow - Master Your Data
+
+**File:** `akhils_siril_workflow.html`
+
+Interactive step-by-step processing guide for Siril and companion tools. Never lose track of your processing steps again.
+
+### Workflow Management
+- **Interactive Checklists**: Visual progress tracking through complex workflows
+- **Multiple Workflow Types**: Dual-band narrowband, broadband OSC, multi-night sessions
+- **Project Organization**: Save and manage multiple imaging projects
+- **Smart Search**: Quickly locate specific processing steps
+- **Auto-Save Progress**: Your work is automatically preserved
+
+### Processing Paths
+
+#### Dual-Band Narrowband (L-eXtreme, DuoNarrowBand)
+Perfect for city imaging with emission nebulae:
+1. **File Organization**: Import and sort OIII/Ha channel data
+2. **Calibration & Stacking**: Dark/flat application with drizzle options
+3. **Channel Processing**: Individual OIII and Ha master creation
+4. **Background Extraction**: Advanced light pollution removal
+5. **Color Palette Creation**: HOO, SHO, and custom combinations
+6. **Enhancement**: Star processing and final composition
+
+#### Broadband OSC Processing
+For color cameras and galaxy imaging:
+1. **Standard Calibration**: Bias, dark, and flat correction
+2. **Bayer Drizzle Stacking**: High-resolution color reconstruction
+3. **Linear Workflows**: Photometric color calibration and background extraction
+4. **Non-linear Enhancement**: StarNet++ star removal, stretching, sharpening
+5. **Star Recomposition**: Professional star blending and final assembly
+
+### Project Features
+- **Progress Visualization**: Real-time completion percentage and status
+- **Export/Import**: Backup your projects as JSON files
+- **Multi-Device Sync**: Continue work across different computers
+- **Custom Notes**: Add personal observations and settings
+
+---
+
+## 🌙 City Imaging Optimization
+
+Both tools are engineered for success under Bortle 9 light pollution:
+
+### Target Selection Strategy
+- **Emission Nebula Priority**: H-alpha rich objects that work with narrowband filters
+- **Surface Brightness Aware**: Avoids low-contrast targets that disappear in skyglow
+- **Moon Phase Intelligence**: Automatic recommendations based on lunar illumination
+- **Altitude Optimization**: Real-time calculations for atmospheric penetration
+
+### Processing Excellence
+- **Narrowband Workflows**: Specialized techniques for dual-band filter data
+- **Advanced Background Extraction**: Aggressive light pollution removal methods
+- **City-Specific Calibration**: Color balance techniques that work despite skyglow
+- **Noise Management**: Specialized denoising for high-ISO city conditions
+
+---
+
+## 🚀 Equipment Compatibility
+
+### Universal Telescope Support
+- **Focal Length Range**: 200mm to 5000mm (wide-field to planetary imaging)
+- **Optical Systems**: Refractors, reflectors, SCTs, and telephoto lenses
+- **Camera Types**: APS-C, Full Frame, Micro 4/3, dedicated astronomy cameras
+- **Filter Integration**: Optimized for L-eXtreme, DuoNarrowBand, and broadband
+
+### City Imaging Best Practices
+- **Filter Strategy**: Narrowband filters cut through light pollution effectively
+- **Exposure Planning**: 180-360 second integrations typical for filtered imaging
+- **Target Selection**: Bright emission nebulae over low-surface-brightness objects
+- **Moon Planning**: Use automatic phase calculator for optimal scheduling
+
+---
+
+## 📱 Mobile & Field Ready
+
+Perfect companions for your imaging sessions:
+- **Offline Operation**: No internet required once loaded in browser
+- **Touch Optimized**: Designed for tablet and smartphone interaction
+- **Field Reference**: Quick access to coordinates, settings, and recommendations
+- **Battery Efficient**: Lightweight design conserves mobile device power
+
+---
+
+## 🛡️ Security & Privacy
+
+- **Completely Offline**: No external dependencies or network requests
+- **Self-Contained**: Single HTML files with embedded resources
+- **Local Data Storage**: All progress saved in your browser only
+- **No Tracking**: Zero data collection or external communications
+
+---
+
+**🌌 Start Imaging Tonight!**
+
+*Professional astrophotography tools designed by city imagers, for city imagers. Turn light pollution into an advantage with intelligent target selection and proven processing workflows.*
