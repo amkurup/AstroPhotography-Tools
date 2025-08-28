@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akhil's Astro Target Selector</title>
+    <!-- Removed external dependencies for offline security -->
+    <style>
+        /* Enhanced color scheme for better readability */
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-card: #1c2128;
+            --text-primary: #f0f6fc;
+            --text-secondary: #c9d1d9;
+            --text-muted: #8b949e;
+            --text-bright: #ffffff;
+            --accent-primary: #58a6ff;
+            --accent-secondary: #a5a5ff;
+            --accent-tertiary: #79c0ff;
+            --highlight-bg: #1f3a5f;
+            --highlight-text: #79c0ff;
+            --note-bg: #1c2128;
+            --note-border: var(--accent-primary);
+            --header-border: #30363d;
+            --table-border: #30363d;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --shadow-hover: rgba(88, 166, 255, 0.15);
+            --danger-color: #f85149;
+            --warning-color: #f0883e;
+            --success-color: #56d364;
+            --progress-track: #21262d;
+            --progress-fill: var(--accent-primary);
+            --ring: 0 0 0 3px rgba(88, 166, 255, 0.15);
+            --card-border: #30363d;
+            --card-border-hover: var(--accent-primary);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 1.5rem;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px var(--shadow-color), 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--header-border);
+        }
+
+        /* Mobile-first responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .container {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        .card {
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-tertiary));
+            border-radius: 12px;
+            padding: 1.75rem;
+            box-shadow: 0 2px 8px var(--shadow-color), 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--card-border);
+            margin-bottom: 1.5rem;
+            transition: all 300ms ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px var(--shadow-hover), 0 2px 8px rgba(0, 0, 0, 0.2);
+            border-color: var(--card-border-hover);
+            transform: translateY(-1px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--header-border);
+        }
+
+        h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            margin-top: 0;
+            letter-spacing: -0.025em;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-bright);
+            margin-top: 0;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.015em;
+        }
+
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-bright);
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .button {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 500ms ease;
+        }
+
+        .button:hover::before {
+            left: 100%;
+        }
+
+        .button:hover {
+            background: linear-gradient(135deg, #3182ce, var(--accent-primary));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 166, 255, 0.4);
+        }
+
+        /* Form controls with enhanced styling */
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 8px;
+            background: linear-gradient(145deg, var(--bg-tertiary), var(--bg-card));
+            color: var(--text-primary);
+            border: 1px solid var(--table-border);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 300ms ease;
+            box-sizing: border-box;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            box-shadow: var(--ring), inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent-primary);
+            background: var(--bg-card);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+        }
+
+        /* Grid layouts for mobile */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .equipment-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .session-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .session-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .sort-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 500px) {
+            .sort-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .sort-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .target-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 600px) {
+            .target-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .target-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .target-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .target-item {
+            cursor: pointer;
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-tertiary));
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .target-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-tertiary));
+            opacity: 0;
+            transition: opacity 300ms ease;
+        }
+
+        .target-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px var(--shadow-hover), 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-color: var(--card-border-hover);
+        }
+
+        .target-item:hover::before {
+            opacity: 1;
+        }
+
+        .target-item h3 {
+            color: var(--text-bright);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .target-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .target-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .target-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            border: 1px solid transparent;
+            transition: all 200ms ease;
+        }
+
+        .target-tag:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .tag-brightness { 
+            background: linear-gradient(135deg, #3b82f6, #2563eb); 
+            color: white; 
+            border-color: #2563eb;
+        }
+        .tag-difficulty-easy { 
+            background: linear-gradient(135deg, var(--success-color), #22c55e); 
+            color: white; 
+            border-color: #22c55e;
+        }
+        .tag-difficulty-medium { 
+            background: linear-gradient(135deg, var(--warning-color), #f59e0b); 
+            color: white; 
+            border-color: #f59e0b;
+        }
+        .tag-difficulty-hard { 
+            background: linear-gradient(135deg, var(--danger-color), #dc2626); 
+            color: white; 
+            border-color: #dc2626;
+        }
+        .tag-size { 
+            background: linear-gradient(135deg, #6b7280, #4b5563); 
+            color: white; 
+            border-color: #4b5563;
+        }
+        .tag-altitude { 
+            background: linear-gradient(135deg, #f97316, #ea580c); 
+            color: white; 
+            border-color: #ea580c;
+        }
+        .tag-catalog { 
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed); 
+            color: white; 
+            border-color: #7c3aed;
+        }
+
+        /* Moon display */
+        .moon-display {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--header-border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .moon-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Calculated specs display with enhanced styling */
+        .specs-display {
+            background: linear-gradient(145deg, var(--note-bg), var(--bg-tertiary));
+            border-left: 4px solid var(--accent-primary);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--header-border);
+        }
+
+        .specs-display h4 {
+            color: var(--accent-tertiary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 600px) {
+            .specs-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .specs-grid > div {
+            padding: 0.5rem;
+            background: rgba(88, 166, 255, 0.05);
+            border-radius: 6px;
+            border: 1px solid rgba(88, 166, 255, 0.1);
+        }
+
+        .specs-grid span:first-child {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .specs-grid span:last-child {
+            color: var(--text-bright);
+            font-weight: 600;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--bg-secondary);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            border: 1px solid var(--header-border);
+            box-shadow: 0 8px 16px var(--shadow-color);
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 10% 1rem;
+                padding: 1.5rem;
+            }
+        }
+
+        .close-button {
+            color: var(--text-secondary);
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 200ms ease;
+        }
+
+        .close-button:hover {
+            color: var(--text-primary);
+        }
+
+        /* Status messages */
+        .status-message {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 1rem;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Utility classes */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Modal content spacing */
+        .modal-content h4 {
+            color: var(--text-bright);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-content h4:first-of-type {
+            margin-top: 1rem;
+        }
+
+        .modal-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Touch-friendly buttons for mobile */
+        @media (max-width: 768px) {
+            .button {
+                min-height: 44px;
+                font-size: 1.1rem;
+            }
+            
+            .target-item {
+                min-height: 44px;
+                padding: 1rem;
+            }
+        }
+    </style>
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header card">
+        <h1>Astro Target Selector</h1>
+        <p>Intelligent target recommendations </p>
+    </div>
+
+    <div class="card">
+        <h2>Equipment Setup</h2>
+        <div class="equipment-grid">
+            <div>
+                <label for="focalLength">Focal Length (mm)</label>
+                <input type="number" id="focalLength" placeholder="e.g., 1360" min="200" max="5000">
+            </div>
+            <div>
+                <label for="cameraType">Camera Type</label>
+                <select id="cameraType">
+                    <option value="apsc">APS-C (e.g., IMX571, IMX533)</option>
+                    <option value="ff">Full Frame (e.g., IMX455, IMX461)</option>
+                    <option value="m43">Micro 4/3 (e.g., IMX294)</option>
+                    <option value="super35">Super 35mm (e.g., IMX585)</option>
+                </select>
+            </div>
+        </div>
+        <div id="calculatedSpecs" class="specs-display hidden">
+            <h4>Calculated Field of View & Resolution:</h4>
+            <div class="specs-grid">
+                <div>
+                    <span>Field of View:</span> <span id="fovDisplay">-</span>
+                </div>
+                <div>
+                    <span>Resolution:</span> <span id="resolutionDisplay">-</span>
+                </div>
+                <div>
+                    <span>Target Scale:</span> <span id="scaleDisplay">-</span>
+                </div>
+                <div>
+                    <span>Recommended for:</span> <span id="recommendationDisplay">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Session Planning</h2>
+        <div class="session-grid">
+            <div>
+                <label for="currentDate">Observation Date</label>
+                <input type="date" id="currentDate">
+            </div>
+            <div>
+                <label>Calculated Moon Phase</label>
+                <div class="moon-display">
+                    <div id="moonIcon" class="moon-icon">🌑</div>
+                    <div>
+                        <div id="moonPhaseName">New Moon</div>
+                        <div id="moonIllumination">0% illuminated</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button onclick="updateTargets()" class="button">Find Targets</button>
+    </div>
+
+    <!-- Target Sorting Controls -->
+    <div class="card">
+        <h3>Sort & Filter Results</h3>
+        <div class="sort-grid">
+            <div>
+                <label for="sortBy">Sort by</label>
+                <select id="sortBy">
+                    <option value="suitability">Best for Bortle 9 (Default)</option>
+                    <option value="altitude">Current Altitude</option>
+                    <option value="brightness">Brightness (Brightest first)</option>
+                    <option value="difficulty">Difficulty (Easiest first)</option>
+                    <option value="size">Target Size (Largest first)</option>
+                    <option value="name">Name (A-Z)</option>
+                    <option value="catalog">Catalog</option>
+                    <option value="focalRange">Focal Length Match</option>
+                </select>
+            </div>
+            <div>
+                <label for="filterType">Filter by Type</label>
+                <select id="filterType">
+                    <option value="all">All Targets</option>
+                    <option value="large_emission">Large Emission Nebulae</option>
+                    <option value="medium_emission">Medium Emission Nebulae</option>
+                    <option value="small_emission">Small Emission/Planetary</option>
+                    <option value="galaxy">Galaxies</option>
+                    <option value="cluster">Star Clusters</option>
+                </select>
+            </div>
+            <div>
+                <label for="maxDifficulty">Max Difficulty</label>
+                <select id="maxDifficulty">
+                    <option value="5">All Difficulties</option>
+                    <option value="1">Very Easy Only</option>
+                    <option value="2">Easy or Easier</option>
+                    <option value="3">Moderate or Easier</option>
+                    <option value="4">Hard or Easier</option>
+                </select>
+            </div>
+            <div>
+                <label for="minAltitude">Min Altitude (degrees)</label>
+                <input type="number" id="minAltitude" min="0" max="90" value="20" placeholder="20">
+            </div>
+        </div>
+        <div class="status-message">
+            <span id="targetCount">0 targets found</span> • 
+            <span id="locationNote">Altitude calculated for 40°N, -74°W (adjust in coordinates if needed)</span>
+        </div>
+    </div>
+
+    <div id="targetList" class="target-grid">
+        <!-- Target cards will be dynamically inserted here -->
+    </div>
+
+</div>
+
+<!-- Modal for detailed target info -->
+<div id="targetModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal()">&times;</span>
+        <h3 id="modalTitle"></h3>
+        <p id="modalDescription"></p>
+        <div>
+            <div>
+                <h4>Filter Recommendation</h4>
+                <p id="modalFilter"></p>
+            </div>
+            <div>
+                <h4>Gain & Exposure Settings</h4>
+                <p id="modalSettings"></p>
+            </div>
+            <div>
+                <h4>Notes for Your Setup</h4>
+                <p id="modalNotes"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Camera sensor specifications
+    const cameraSpecs = {
+        'apsc': { width: 23.5, height: 15.6, name: 'APS-C' },
+        'ff': { width: 35.9, height: 23.9, name: 'Full Frame' },
+        'm43': { width: 17.3, height: 13.0, name: 'Micro 4/3' },
+        'super35': { width: 24.9, height: 14.0, name: 'Super 35mm' }
+    };
+
+    // Enhanced target database with comprehensive catalog integration
+    const targets = [
+        // Large Emission Nebulae (>60 arcmin) - Including Sharpless Catalog
+        {
+            name: "Heart Nebula (IC 1805, Sh2-190)",
+            catalog: "IC/Sharpless",
+            coordinates: { ra: "02h 32m 42s", dec: "+61° 26' 14\"", raDec: [2.545, 61.437] },
+            type: "large_emission",
+            months: [9, 10, 11, 0, 1, 2],
+            moon: ["new", "quarter"],
+            size: { width: 150, height: 120 },
+            minFocalLength: 200, maxFocalLength: 800,
+            description: "Stunning heart-shaped emission nebula in Cassiopeia, rich in H-alpha. Part of the Heart & Soul complex.",
+            baseFilter: "HIGHLY RECOMMENDED - L-eXtreme/Ha filter essential for structure detail",
+            baseSettings: "Gain: 200-300. Exposure: 180-360s. Longer exposures reveal intricate heart shape",
+            brightness: 3,
+            difficulty: 2
+        },
+        {
+            name: "Soul Nebula (IC 1848, Sh2-199)",
+            catalog: "IC/Sharpless", 
+            coordinates: { ra: "02h 51m 00s", dec: "+60° 24' 00\"", raDec: [2.85, 60.4] },
+            type: "large_emission",
+            months: [9, 10, 11, 0, 1, 2],
+            moon: ["new", "quarter"],
+            size: { width: 120, height: 90 },
+            minFocalLength: 200, maxFocalLength: 800,
+            description: "Magnificent emission nebula adjacent to Heart Nebula, featuring baby-like silhouette structure.",
+            baseFilter: "HIGHLY RECOMMENDED - Narrowband essential for bringing out wispy structure", 
+            baseSettings: "Gain: 200-300. Exposure: 180-360s. Pair with Heart Nebula for mosaic",
+            brightness: 3,
+            difficulty: 2
+        },
+        {
+            name: "Wizard Nebula (NGC 7380, Sh2-142)",
+            catalog: "NGC/Sharpless",
+            coordinates: { ra: "22h 47m 12s", dec: "+58° 07' 54\"", raDec: [22.787, 58.132] },
+            type: "large_emission",
+            months: [6, 7, 8, 9, 10, 11],
+            moon: ["new", "quarter"],
+            size: { width: 25, height: 20 },
+            minFocalLength: 600, maxFocalLength: 2000,
+            description: "Magical emission nebula in Cepheus with distinctive wizard-like appearance and open star cluster.",
+            baseFilter: "RECOMMENDED - L-eXtreme brings out magical structural details",
+            baseSettings: "Gain: 200-300. Exposure: 180-300s. Central cluster creates beautiful contrast",
+            brightness: 3,
+            difficulty: 3
+        },
+        {
+            name: "North America Nebula (NGC 7000)",
+            catalog: "NGC",
+            coordinates: { ra: "20h 58m 48s", dec: "+44° 12' 00\"", raDec: [20.98, 44.2] },
+            type: "large_emission",
+            months: [6, 7, 8, 9, 10],
+            moon: ["new", "quarter"],
+            size: { width: 120, height: 100 },
+            minFocalLength: 200, maxFocalLength: 800,
+            description: "Massive emission nebula in Cygnus resembling the North American continent.",
+            baseFilter: "RECOMMENDED - L-eXtreme or Ha filter cuts through light pollution effectively",
+            baseSettings: "Gain: 200-300. Exposure: 180-300s for narrowband, 60-120s for broadband",
+            brightness: 4,
+            difficulty: 2
+        },
+        {
+            name: "Elephant Trunk Nebula (IC 1396, Sh2-131)",
+            catalog: "IC/Sharpless",
+            coordinates: { ra: "21h 39m 00s", dec: "+57° 30' 00\"", raDec: [21.65, 57.5] },
+            type: "large_emission",
+            months: [6, 7, 8, 9, 10, 11],
+            moon: ["new", "quarter"],
+            size: { width: 170, height: 140 },
+            minFocalLength: 300, maxFocalLength: 1200,
+            description: "Spectacular dark globule resembling an elephant's trunk in the emission nebula IC 1396.",
+            baseFilter: "HIGHLY RECOMMENDED - Narrowband essential for dark lane contrast",
+            baseSettings: "Gain: 200-300. Exposure: 240-360s. Long exposures reveal surrounding nebulosity",
+            brightness: 3,
+            difficulty: 3
+        },
+        {
+            name: "Veil Nebula Complex (NGC 6960/6992)",
+            catalog: "NGC",
+            coordinates: { ra: "20h 45m 38s", dec: "+30° 43' 00\"", raDec: [20.76, 30.72] },
+            type: "large_emission", 
+            months: [5, 6, 7, 8, 9],
+            moon: ["new", "quarter"],
+            size: { width: 180, height: 120 },
+            minFocalLength: 300, maxFocalLength: 1000,
+            description: "Spectacular supernova remnant spanning a huge area of Cygnus.",
+            baseFilter: "HIGHLY RECOMMENDED - L-eXtreme perfect for H-alpha and OIII emissions",
+            baseSettings: "Gain: 200-300. Exposure: 180-300s. Longer exposures work well with filter",
+            brightness: 3,
+            difficulty: 2
+        },
+        {
+            name: "Rosette Nebula (NGC 2237, Sh2-275)",
+            catalog: "NGC/Sharpless",
+            coordinates: { ra: "06h 32m 18s", dec: "+05° 03' 12\"", raDec: [6.538, 5.053] },
+            type: "large_emission",
+            months: [10, 11, 0, 1, 2, 3],
+            moon: ["new", "quarter"],
+            size: { width: 80, height: 60 },
+            minFocalLength: 400, maxFocalLength: 1200,
+            description: "Large circular emission nebula in Monoceros, classic H-alpha target with distinctive skull-like cavity.",
+            baseFilter: "RECOMMENDED - L-eXtreme excellent for this H-alpha rich nebula",
+            baseSettings: "Gain: 200-300. Exposure: 180-300s. High gain helps with faint details",
+            brightness: 3,
+            difficulty: 3
+        },
+        {
+            name: "Tulip Nebula (Sh2-101)",
+            catalog: "Sharpless",
+            coordinates: { ra: "20h 01m 42s", dec: "+35° 12' 18\"", raDec: [20.028, 35.205] },
+            type: "large_emission",
+            months: [5, 6, 7, 8, 9],
+            moon: ["new", "quarter"],
+            size: { width: 8, height: 6 },
+            minFocalLength: 800, maxFocalLength: 2500,
+            description: "Beautiful tulip-shaped emission nebula in Cygnus, a hidden gem in the summer sky.",
+            baseFilter: "HIGHLY RECOMMENDED - Narrowband brings out delicate petal structure",
+            baseSettings: "Gain: 200-300. Exposure: 240-360s. Requires patience for faint details",
+            brightness: 2,
+            difficulty: 4
+        },
+
+        // Medium Emission Nebulae (20-60 arcmin) - Enhanced Messier & NGC Catalog
+        {
+            name: "Orion Nebula (M42)",
+            catalog: "Messier",
+            coordinates: { ra: "05h 35m 17s", dec: "-05° 23' 14\"", raDec: [5.588, -5.387] },
+            type: "medium_emission",
+            months: [10, 11, 0, 1, 2, 3],
+            moon: ["new", "quarter", "full"],
+            size: { width: 65, height: 60 },
+            minFocalLength: 500, maxFocalLength: 2000,
+            description: "Brightest nebula in the sky, perfect for beginners and advanced imagers. The jewel of Orion.",
+            baseFilter: "OPTIONAL - Can shoot without filter, or use L-eXtreme for contrast",
+            baseSettings: "Gain: 0-100. Exposure: 30-120s. Very bright core, use shorter exposures",
+            brightness: 5,
+            difficulty: 1
+        },
+        {
+            name: "Eagle Nebula (M16, Sh2-49)",
+            catalog: "Messier/Sharpless",
+            coordinates: { ra: "18h 18m 48s", dec: "-13° 49' 00\"", raDec: [18.313, -13.817] },
+            type: "medium_emission",
+            months: [4, 5, 6, 7, 8],
+            moon: ["new", "quarter"],
+            size: { width: 35, height: 28 },
+            minFocalLength: 600, maxFocalLength: 2500,
+            description: "Famous 'Pillars of Creation' nebula in Serpens, iconic Hubble Space Telescope target.",
+            baseFilter: "RECOMMENDED - L-eXtreme helps separate pillars from background",
+            baseSettings: "Gain: 200-300. Exposure: 180-300s. Longer exposures reveal structure",
+            brightness: 3,
+            difficulty: 3
+        },
+        {
+            name: "Lagoon Nebula (M8, Sh2-25)",
+            catalog: "Messier/Sharpless",
+            coordinates: { ra: "18h 03m 37s", dec: "-24° 23' 12\"" },
+            type: "medium_emission",
+            months: [4, 5, 6, 7, 8],
+            moon: ["new", "quarter"],
+            size: { width: 45, height: 30 },
+            minFocalLength: 500, maxFocalLength: 2000,
+            description: "Bright emission nebula in Sagittarius with prominent dark lane bisecting the nebula.",
+            baseFilter: "RECOMMENDED - L-eXtreme enhances contrast against light pollution",
+            baseSettings: "Gain: 200-300. Exposure: 120-240s. Shows dust lanes beautifully",
+            brightness: 4,
+            difficulty: 2
+        },
+        {
+            name: "Horsehead Nebula (B33, near IC 434)",
+            catalog: "Barnard/IC", 
+            coordinates: { ra: "05h 40m 59s", dec: "-02° 27' 33\"" },
+            type: "medium_emission",
+            months: [10, 11, 0, 1, 2, 3],
+            moon: ["new", "quarter"],
+            size: { width: 8, height: 6 },
+            minFocalLength: 800, maxFocalLength: 3000,
+            description: "Iconic dark nebula silhouetted against bright emission nebula IC 434.",
+            baseFilter: "HIGHLY RECOMMENDED - Narrowband essential for H-alpha background",
+            baseSettings: "Gain: 200-300. Exposure: 240-360s. Challenging target requiring long exposures",
+            brightness: 2,
+            difficulty: 4
+        },
+        {
+            name: "Trifid Nebula (M20, Sh2-30)",
+            catalog: "Messier/Sharpless",
+            coordinates: { ra: "18h 02m 23s", dec: "-22° 58' 18\"" },
+            type: "medium_emission",
+            months: [4, 5, 6, 7, 8],
+            moon: ["new", "quarter"],
+            size: { width: 28, height: 28 },
+            minFocalLength: 600, maxFocalLength: 2500,
+            description: "Beautiful tri-lobed nebula in Sagittarius, often paired with nearby Lagoon Nebula.",
+            baseFilter: "RECOMMENDED - L-eXtreme brings out the three distinctive dark lanes",
+            baseSettings: "Gain: 200-300. Exposure: 180-300s. Reveals both emission and reflection components",
+            brightness: 3,
+            difficulty: 3
+        },
+        {
+            name: "Flame Nebula (NGC 2024, Sh2-277)",
+            catalog: "NGC/Sharpless",
+            coordinates: { ra: "05h 41m 54s", dec: "-01° 51' 00\"" },
+            type: "medium_emission",
+            months: [10, 11, 0, 1, 2, 3],
+            moon: ["new", "quarter"],
+            size: { width: 30, height: 20 },
+            minFocalLength: 600, maxFocalLength: 2500,
+            description: "Dramatic emission nebula near Alnitak star in Orion, resembling flames.",
+            baseFilter: "HIGHLY RECOMMENDED - Narrowband essential for detail in bright star field",
+            baseSettings: "Gain: 200-300. Exposure: 180-300s. Challenging due to nearby bright star",
+            brightness: 3,
+            difficulty: 4
+        },
+
+        // Small Emission/Planetary Nebulae (<20 arcmin) - Enhanced NGC & IC Catalog  
+        {
+            name: "Ring Nebula (M57)",
+            catalog: "Messier",
+            coordinates: { ra: "18h 53m 35s", dec: "+33° 01' 45\"", raDec: [18.893, 33.029] },
+            type: "small_emission",
+            months: [5, 6, 7, 8, 9],
+            moon: ["quarter", "full"],
+            size: { width: 2.5, height: 2.5 },
+            minFocalLength: 1000, maxFocalLength: 4000,
+            description: "Famous planetary nebula in Lyra, perfect for long focal lengths. Classic 'donut' shape.",
+            baseFilter: "HIGHLY RECOMMENDED - Planetary nebulae are pure OIII and H-alpha",
+            baseSettings: "Gain: 100-200. Exposure: 300-600s. Long exposures reveal outer halo",
+            brightness: 4,
+            difficulty: 2
+        },
+        {
+            name: "Dumbbell Nebula (M27)",
+            catalog: "Messier",
+            coordinates: { ra: "19h 59m 36s", dec: "+22° 43' 16\"", raDec: [19.993, 22.721] },
+            type: "small_emission",
+            months: [6, 7, 8, 9, 10],
+            moon: ["quarter", "full"],
+            size: { width: 8, height: 6 },
+            minFocalLength: 800, maxFocalLength: 3000,
+            description: "Bright planetary nebula in Vulpecula, excellent for city imaging. Apple-core shape.",
+            baseFilter: "RECOMMENDED - Filter helps even with bright moon present",
+            baseSettings: "Gain: 100-200. Exposure: 180-360s. Bright enough for moderate exposures",
+            brightness: 4,
+            difficulty: 1
+        },
+        {
+            name: "Cat's Eye Nebula (NGC 6543)",
+            catalog: "NGC",
+            coordinates: { ra: "17h 58m 33s", dec: "+66° 37' 59\"" },
+            type: "small_emission",
+            months: [4, 5, 6, 7, 8],
+            moon: ["quarter", "full"],
+            size: { width: 0.3, height: 0.3 },
+            minFocalLength: 2000, maxFocalLength: 5000,
+            description: "Intricate planetary nebula in Draco, requires high magnification. Complex knot structure.",
+            baseFilter: "HIGHLY RECOMMENDED - Essential for bringing out intricate structure",
+            baseSettings: "Gain: 100-200. Exposure: 300-600s. Very small, needs long focal length",
+            brightness: 3,
+            difficulty: 4
+        },
+        {
+            name: "Helix Nebula (NGC 7293)",
+            catalog: "NGC",
+            coordinates: { ra: "22h 29m 39s", dec: "-20° 50' 14\"" },
+            type: "small_emission",
+            months: [7, 8, 9, 10, 11],
+            moon: ["new", "quarter"],
+            size: { width: 25, height: 19 },
+            minFocalLength: 600, maxFocalLength: 1500,
+            description: "Large 'Eye of God' planetary nebula in Aquarius. Requires wide field for full extent.",
+            baseFilter: "RECOMMENDED - L-eXtreme helps with faint outer regions",
+            baseSettings: "Gain: 200-300. Exposure: 240-360s. Large but faint, needs long exposures",
+            brightness: 2,
+            difficulty: 3
+        },
+        {
+            name: "Bubble Nebula (NGC 7635, Sh2-162)",
+            catalog: "NGC/Sharpless",
+            coordinates: { ra: "23h 20m 45s", dec: "+61° 12' 42\"" },
+            type: "small_emission",
+            months: [7, 8, 9, 10, 11],
+            moon: ["new", "quarter"],
+            size: { width: 15, height: 8 },
+            minFocalLength: 800, maxFocalLength: 2500,
+            description: "Distinctive bubble-shaped emission nebula in Cassiopeia created by stellar wind.",
+            baseFilter: "HIGHLY RECOMMENDED - Narrowband essential for bubble structure",
+            baseSettings: "Gain: 200-300. Exposure: 240-360s. Faint target requiring patience",
+            brightness: 2,
+            difficulty: 4
+        },
+        {
+            name: "Owl Nebula (M97)",
+            catalog: "Messier",
+            coordinates: { ra: "11h 14m 48s", dec: "+55° 01' 08\"" },
+            type: "small_emission",
+            months: [1, 2, 3, 4, 5, 6],
+            moon: ["quarter", "full"],
+            size: { width: 3.4, height: 3.3 },
+            minFocalLength: 1200, maxFocalLength: 4000,
+            description: "Planetary nebula in Ursa Major with distinctive 'owl eyes' dark patches.",
+            baseFilter: "HIGHLY RECOMMENDED - OIII filter essential for contrast",
+            baseSettings: "Gain: 100-200. Exposure: 300-600s. Requires high magnification",
+            brightness: 3,
+            difficulty: 3
+        },
+        {
+            name: "Crescent Nebula (NGC 6888, Sh2-105)",
+            catalog: "NGC/Sharpless",
+            coordinates: { ra: "20h 12m 00s", dec: "+38° 21' 18\"" },
+            type: "small_emission",
+            months: [5, 6, 7, 8, 9],
+            moon: ["new", "quarter"],
+            size: { width: 18, height: 12 },
+            minFocalLength: 800, maxFocalLength: 2500,
+            description: "Wolf-Rayet star bubble in Cygnus with beautiful crescent shape and intricate filaments.",
+            baseFilter: "HIGHLY RECOMMENDED - Narrowband reveals delicate filamentary structure",
+            baseSettings: "Gain: 200-300. Exposure: 240-360s. Challenging but rewarding target",
+            brightness: 2,
+            difficulty: 4
+        },
+
+        // Galaxies (Broadband targets) - Enhanced Messier & NGC Catalog
+        {
+            name: "Andromeda Galaxy (M31)",
+            catalog: "Messier",
+            coordinates: { ra: "00h 42m 44s", dec: "+41° 16' 09\"", raDec: [0.712, 41.269] },
+            type: "galaxy",
+            months: [7, 8, 9, 10, 11],
+            moon: ["new"],
+            size: { width: 190, height: 60 },
+            minFocalLength: 200, maxFocalLength: 800,
+            description: "Our nearest major galactic neighbor, requires dark skies from city. Spectacular spiral structure.",
+            baseFilter: "NOT RECOMMENDED - Narrowband filters block galaxy light",
+            baseSettings: "Gain: 100. Exposure: 120-240s. Broadband only, needs dark sky",
+            brightness: 2,
+            difficulty: 4
+        },
+        {
+            name: "Whirlpool Galaxy (M51)",
+            catalog: "Messier",
+            coordinates: { ra: "13h 29m 53s", dec: "+47° 11' 43\"" },
+            type: "galaxy",
+            months: [3, 4, 5, 6, 7],
+            moon: ["new"],
+            size: { width: 11, height: 7 },
+            minFocalLength: 800, maxFocalLength: 2500,
+            description: "Beautiful face-on spiral galaxy in Canes Venatici. Classic interacting galaxy pair.",
+            baseFilter: "NOT RECOMMENDED - Use broadband for galaxy light and star colors",
+            baseSettings: "Gain: 100. Exposure: 180-300s. Challenging from Bortle 9",
+            brightness: 2,
+            difficulty: 4
+        },
+        {
+            name: "Pinwheel Galaxy (M101)",
+            catalog: "Messier",
+            coordinates: { ra: "14h 03m 13s", dec: "+54° 20' 57\"" },
+            type: "galaxy",
+            months: [3, 4, 5, 6, 7],
+            moon: ["new"],
+            size: { width: 29, height: 27 },
+            minFocalLength: 600, maxFocalLength: 1500,
+            description: "Large face-on spiral galaxy in Ursa Major. Low surface brightness giant.",
+            baseFilter: "NOT RECOMMENDED - Very faint, needs all available light",
+            baseSettings: "Gain: 100. Exposure: 300-600s. Extremely challenging from city",
+            brightness: 1,
+            difficulty: 5
+        },
+        {
+            name: "Sombrero Galaxy (M104)",
+            catalog: "Messier",
+            coordinates: { ra: "12h 39m 59s", dec: "-11° 37' 23\"" },
+            type: "galaxy",
+            months: [3, 4, 5, 6],
+            moon: ["new"],
+            size: { width: 9, height: 4 },
+            minFocalLength: 1000, maxFocalLength: 3000,
+            description: "Edge-on spiral galaxy in Virgo with prominent dust lane. Distinctive hat-like silhouette.",
+            baseFilter: "NOT RECOMMENDED - Broadband reveals dust lane contrast best",
+            baseSettings: "Gain: 100. Exposure: 240-360s. Dust lane requires good contrast",
+            brightness: 2,
+            difficulty: 4
+        },
+        {
+            name: "Triangulum Galaxy (M33)",
+            catalog: "Messier", 
+            coordinates: { ra: "01h 33m 51s", dec: "+30° 39' 37\"" },
+            type: "galaxy",
+            months: [8, 9, 10, 11, 0],
+            moon: ["new"],
+            size: { width: 73, height: 45 },
+            minFocalLength: 400, maxFocalLength: 1200,
+            description: "Face-on spiral galaxy in Triangulum. Third largest galaxy in Local Group.",
+            baseFilter: "NOT RECOMMENDED - Low surface brightness requires maximum light",
+            baseSettings: "Gain: 100. Exposure: 300-600s. Very challenging from light pollution",
+            brightness: 1,
+            difficulty: 5
+        },
+        {
+            name: "Bode's Galaxy (M81)",
+            catalog: "Messier",
+            coordinates: { ra: "09h 55m 33s", dec: "+69° 03' 55\"" },
+            type: "galaxy",
+            months: [1, 2, 3, 4, 5, 11, 12],
+            moon: ["new"],
+            size: { width: 27, height: 14 },
+            minFocalLength: 600, maxFocalLength: 2000,
+            description: "Bright spiral galaxy in Ursa Major. Often paired with nearby M82.",
+            baseFilter: "NOT RECOMMENDED - Broadband captures galaxy's natural colors",
+            baseSettings: "Gain: 100. Exposure: 180-360s. One of easier galaxies from city",
+            brightness: 2,
+            difficulty: 3
+        },
+
+        // Star Clusters & Special Targets
+        {
+            name: "Double Cluster (NGC 869/884)",
+            catalog: "NGC",
+            coordinates: { ra: "02h 20m 00s", dec: "+57° 08' 00\"", raDec: [2.333, 57.133] },
+            type: "cluster",
+            months: [8, 9, 10, 11, 0, 1],
+            moon: ["quarter", "full"],
+            size: { width: 60, height: 30 },
+            minFocalLength: 200, maxFocalLength: 800,
+            description: "Spectacular open star cluster pair in Perseus. Beautiful color contrast.",
+            baseFilter: "NOT RECOMMENDED - Want natural star colors",
+            baseSettings: "Gain: 0-100. Exposure: 60-180s. Bright stars, shorter exposures",
+            brightness: 4,
+            difficulty: 1
+        },
+        {
+            name: "Pleiades (M45)",
+            catalog: "Messier",
+            coordinates: { ra: "03h 47m 29s", dec: "+24° 07' 00\"", raDec: [3.791, 24.117] },
+            type: "cluster", 
+            months: [9, 10, 11, 0, 1, 2],
+            moon: ["quarter", "full"],
+            size: { width: 110, height: 110 },
+            minFocalLength: 200, maxFocalLength: 600,
+            description: "Famous Seven Sisters star cluster with blue reflection nebulosity.",
+            baseFilter: "NOT RECOMMENDED - Blue reflection nebula requires broadband",
+            baseSettings: "Gain: 0-100. Exposure: 60-180s. Show blue nebulosity around bright stars",
+            brightness: 5,
+            difficulty: 1
+        },
+        {
+            name: "Hyades Cluster",
+            catalog: "Collinder",
+            coordinates: { ra: "04h 27m 00s", dec: "+15° 52' 00\"" },
+            type: "cluster",
+            months: [10, 11, 0, 1, 2, 3],
+            moon: ["quarter", "full"],
+            size: { width: 330, height: 330 },
+            minFocalLength: 200, maxFocalLength: 400,
+            description: "Nearest star cluster to Earth, very wide field target in Taurus.",
+            baseFilter: "NOT RECOMMENDED - Natural star colors preferred",
+            baseSettings: "Gain: 0-100. Exposure: 30-120s. Very wide field, use short focal length",
+            brightness: 4,
+            difficulty: 1
+        },
+        
+        // Bonus Sharpless Catalog Gems
+        {
+            name: "Pacman Nebula (NGC 281, Sh2-184)",
+            catalog: "NGC/Sharpless",
+            coordinates: { ra: "00h 52m 59s", dec: "+56° 37' 19\"" },
+            type: "medium_emission",
+            months: [8, 9, 10, 11, 0, 1],
+            moon: ["new", "quarter"],
+            size: { width: 35, height: 30 },
+            minFocalLength: 600, maxFocalLength: 2000,
+            description: "Emission nebula in Cassiopeia with distinctive 'mouth' opening resembling Pac-Man.",
+            baseFilter: "HIGHLY RECOMMENDED - L-eXtreme brings out mouth structure",
+            baseSettings: "Gain: 200-300. Exposure: 180-300s. Classic H-alpha target",
+            brightness: 3,
+            difficulty: 3
+        },
+        {
+            name: "Cone Nebula (NGC 2264, Sh2-273)",
+            catalog: "NGC/Sharpless",
+            coordinates: { ra: "06h 41m 06s", dec: "+09° 53' 44\"" },
+            type: "medium_emission",
+            months: [11, 0, 1, 2, 3],
+            moon: ["new", "quarter"],
+            size: { width: 20, height: 15 },
+            minFocalLength: 800, maxFocalLength: 2500,
+            description: "Dark cone-shaped nebula with surrounding emission region and Christmas Tree cluster.",
+            baseFilter: "RECOMMENDED - Narrowband enhances cone contrast",
+            baseSettings: "Gain: 200-300. Exposure: 240-360s. Challenging dark feature",
+            brightness: 2,
+            difficulty: 4
+        },
+        {
+            name: "California Nebula (NGC 1499, Sh2-220)",
+            catalog: "NGC/Sharpless",
+            coordinates: { ra: "04h 00m 42s", dec: "+36° 37' 00\"" },
+            type: "large_emission",
+            months: [9, 10, 11, 0, 1, 2],
+            moon: ["new", "quarter"],
+            size: { width: 160, height: 40 },
+            minFocalLength: 200, maxFocalLength: 600,
+            description: "Large emission nebula in Perseus resembling the state of California.",
+            baseFilter: "HIGHLY RECOMMENDED - H-alpha filter essential for visibility",
+            baseSettings: "Gain: 200-300. Exposure: 240-360s. Very faint, requires patience",
+            brightness: 1,
+            difficulty: 4
+        }
+    ];
+
+    // Observer coordinates (default to NYC area, can be customized)
+    const observerLat = 40.7; // degrees
+    const observerLon = -74.0; // degrees
+
+    function calculateAltitude(target, date) {
+        // Simple altitude calculation for current time
+        if (!target.coordinates?.raDec) {
+            // Return a reasonable default altitude for targets without coordinates
+            return 45; // Assume targets are reasonably visible
+        }
+        
+        const [ra, dec] = target.coordinates.raDec;
+        
+        // Convert to radians
+        const lat = observerLat * Math.PI / 180;
+        const decRad = dec * Math.PI / 180;
+        
+        // Calculate Local Sidereal Time (simplified)
+        const utc = date.getTime() / 1000;
+        const jd = utc / 86400 + 2440587.5;
+        const t = (jd - 2451545.0) / 36525;
+        const gmst = 280.46061837 + 360.98564736629 * (jd - 2451545) + 0.000387933 * t * t;
+        const lst = (gmst + observerLon) % 360;
+        
+        // Hour angle
+        const ha = (lst - ra * 15) * Math.PI / 180;
+        
+        // Calculate altitude
+        const sinAlt = Math.sin(lat) * Math.sin(decRad) + Math.cos(lat) * Math.cos(decRad) * Math.cos(ha);
+        const altitude = Math.asin(Math.max(-1, Math.min(1, sinAlt))) * 180 / Math.PI;
+        
+        return Math.max(0, altitude);
+    }
+
+    function sortTargets(targets, sortBy, currentDate, focalLength, fov) {
+        return targets.sort((a, b) => {
+            switch (sortBy) {
+                case 'altitude':
+                    return calculateAltitude(b, currentDate) - calculateAltitude(a, currentDate);
+                case 'brightness':
+                    return b.brightness - a.brightness;
+                case 'difficulty':
+                    return a.difficulty - b.difficulty;
+                case 'size':
+                    const sizeA = a.size.width * a.size.height;
+                    const sizeB = b.size.width * b.size.height;
+                    return sizeB - sizeA;
+                case 'name':
+                    return a.name.localeCompare(b.name);
+                case 'catalog':
+                    return (a.catalog || 'ZZZ').localeCompare(b.catalog || 'ZZZ');
+                case 'focalRange':
+                    const rangeA = Math.abs(focalLength - (a.minFocalLength + a.maxFocalLength) / 2);
+                    const rangeB = Math.abs(focalLength - (b.minFocalLength + b.maxFocalLength) / 2);
+                    return rangeA - rangeB;
+                case 'suitability':
+                default:
+                    const scoreA = a.brightness - a.difficulty;
+                    const scoreB = b.brightness - b.difficulty;
+                    return scoreB - scoreA;
+            }
+        });
+    }
+
+    function filterTargets(targets, filterType, maxDifficulty, minAltitude, currentDate) {
+        return targets.filter(target => {
+            // Type filter
+            if (filterType !== 'all' && target.type !== filterType) return false;
+            
+            // Difficulty filter
+            if (target.difficulty > maxDifficulty) return false;
+            
+            // Altitude filter
+            const altitude = calculateAltitude(target, currentDate);
+            if (altitude < minAltitude) return false;
+            
+            return true;
+        });
+    }
+
+    function calculateFOV(focalLength, cameraType) {
+        const sensor = cameraSpecs[cameraType];
+        if (!sensor || !focalLength) return null;
+        
+        const fovWidth = (sensor.width / focalLength) * 206265 / 60; // arcminutes
+        const fovHeight = (sensor.height / focalLength) * 206265 / 60; // arcminutes
+        const resolution = 206.265 * 3.76 / focalLength; // arcsec/pixel assuming 3.76μm pixels
+        
+        return {
+            width: fovWidth,
+            height: fovHeight,
+            resolution: resolution,
+            diagonal: Math.sqrt(fovWidth * fovWidth + fovHeight * fovHeight)
+        };
+    }
+
+    function getTargetScale(focalLength) {
+        if (focalLength < 600) return "Wide Field (Large nebulae, constellations)";
+        if (focalLength < 1200) return "Medium Field (Medium nebulae, galaxy cores)";
+        if (focalLength < 2500) return "Telephoto (Small nebulae, planetary nebulae)";
+        return "High Magnification (Tiny planetaries, galaxy details)";
+    }
+
+    function isTargetSuitable(target, fov, focalLength, moonPhase, currentMonth) {
+        // Check month
+        if (!target.months.includes(currentMonth)) return false;
+        
+        // Check moon phase
+        if (!target.moon.includes(moonPhase)) return false;
+        
+        // Check focal length range
+        if (focalLength < target.minFocalLength || focalLength > target.maxFocalLength) return false;
+        
+        // Check if target fits reasonably in FOV
+        const targetDiagonal = Math.sqrt(target.size.width * target.size.width + target.size.height * target.size.height);
+        const fovDiagonal = Math.sqrt(fov.width * fov.width + fov.height * fov.height);
+        
+        // Target should be between 20% and 150% of FOV diagonal for good framing
+        return (targetDiagonal >= fovDiagonal * 0.2 && targetDiagonal <= fovDiagonal * 1.5);
+    }
+
+    function generateRecommendations(target, focalLength, fov, moonPhase) {
+        let filter = target.baseFilter;
+        let settings = target.baseSettings;
+        let notes = "";
+
+        // Adjust for Bortle 9 conditions
+        if (target.type === "galaxy") {
+            filter = "NOT SUITABLE - Galaxies are extremely challenging from Bortle 9 skies. Consider emission nebulae instead.";
+            notes = "⚠️ DIFFICULT TARGET: Galaxies require very dark skies. From Bortle 9, you'll struggle to capture galaxy detail.";
+        }
+
+        // Adjust settings based on moon phase
+        if (moonPhase === "full" && target.type.includes("emission")) {
+            settings = settings.replace(/Exposure: (\d+)-(\d+)s/, (match, min, max) => {
+                const newMin = Math.floor(parseInt(min) * 0.7);
+                const newMax = Math.floor(parseInt(max) * 0.7);
+                return `Exposure: ${newMin}-${newMax}s (reduced for bright moon)`;
+            });
+        }
+
+        // Framing advice
+        const targetDiagonal = Math.sqrt(target.size.width * target.size.width + target.size.height * target.size.height);
+        const fovDiagonal = Math.sqrt(fov.width * fov.width + fov.height * fov.height);
+        const fillRatio = targetDiagonal / fovDiagonal;
+
+        if (fillRatio > 1.2) {
+            notes += " 🔍 TIGHT FRAMING: Target is larger than your FOV. You'll capture a detailed section.";
+        } else if (fillRatio < 0.3) {
+            notes += " 🌌 WIDE FRAMING: Target will appear small. Good for showing surrounding field.";
+        } else {
+            notes += " 🎯 PERFECT FRAMING: Target size is ideal for your focal length.";
+        }
+
+        return { filter, settings, notes };
+    }
+
+    function updateCalculations() {
+        const focalLength = parseInt(document.getElementById('focalLength').value);
+        const cameraType = document.getElementById('cameraType').value;
+        
+        if (!focalLength || focalLength < 200 || focalLength > 5000) {
+            document.getElementById('calculatedSpecs').classList.add('hidden');
+            return null;
+        }
+
+        const fov = calculateFOV(focalLength, cameraType);
+        if (!fov) return null;
+
+        // Display calculations
+        document.getElementById('fovDisplay').textContent = `${fov.width.toFixed(1)}' × ${fov.height.toFixed(1)}'`;
+        document.getElementById('resolutionDisplay').textContent = `${fov.resolution.toFixed(2)}"/pixel`;
+        document.getElementById('scaleDisplay').textContent = getTargetScale(focalLength);
+        
+        // Determine what targets work best
+        let recommendation = "";
+        if (focalLength < 600) recommendation = "Large nebulae, star fields";
+        else if (focalLength < 1200) recommendation = "Medium nebulae, galaxy cores";
+        else if (focalLength < 2500) recommendation = "Small nebulae, planetaries";
+        else recommendation = "Planetary nebulae, galaxy details";
+        
+        document.getElementById('recommendationDisplay').textContent = recommendation;
+        document.getElementById('calculatedSpecs').classList.remove('hidden');
+        
+        return fov;
+    }
+
+    function calculateMoonPhase(date) {
+        // More accurate moon phase calculation using known new moon reference
+        const knownNewMoon = new Date('2024-01-11T11:57:00Z'); // Accurate new moon
+        const diffInMs = date.getTime() - knownNewMoon.getTime();
+        const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+        const lunarCycle = 29.530588853; // More precise synodic month
+        
+        // Calculate the current position in the lunar cycle (0-29.53 days)
+        let phase = diffInDays % lunarCycle;
+        if (phase < 0) phase += lunarCycle;
+        
+        // Calculate illumination percentage (0-100%)
+        const illumination = 50 * (1 - Math.cos(2 * Math.PI * phase / lunarCycle));
+        
+        // Determine phase category and icon
+        let phaseCategory, phaseName, icon;
+        
+        if (phase < 1.84566) {
+            phaseCategory = 'new';
+            phaseName = 'New Moon';
+            icon = '🌑';
+        } else if (phase < 5.53699) {
+            phaseCategory = 'new';
+            phaseName = 'Waxing Crescent';
+            icon = '🌒';
+        } else if (phase < 9.22831) {
+            phaseCategory = 'quarter';
+            phaseName = 'First Quarter';
+            icon = '🌓';
+        } else if (phase < 12.91963) {
+            phaseCategory = 'quarter';
+            phaseName = 'Waxing Gibbous';
+            icon = '🌔';
+        } else if (phase < 16.61096) {
+            phaseCategory = 'full';
+            phaseName = 'Full Moon';
+            icon = '🌕';
+        } else if (phase < 20.30228) {
+            phaseCategory = 'full';
+            phaseName = 'Waning Gibbous';
+            icon = '🌖';
+        } else if (phase < 23.99361) {
+            phaseCategory = 'quarter';
+            phaseName = 'Last Quarter';
+            icon = '🌗';
+        } else {
+            phaseCategory = 'new';
+            phaseName = 'Waning Crescent';
+            icon = '🌘';
+        }
+        
+        return {
+            category: phaseCategory,
+            name: phaseName,
+            icon: icon,
+            illumination: Math.round(illumination),
+            phase: phase
+        };
+    }
+
+    function updateMoonDisplay(date) {
+        const moonData = calculateMoonPhase(date);
+        
+        document.getElementById('moonIcon').textContent = moonData.icon;
+        document.getElementById('moonPhaseName').textContent = moonData.name;
+        document.getElementById('moonIllumination').textContent = `${moonData.illumination}% illuminated`;
+        
+        return moonData.category;
+    }
+
+    function updateTargets() {
+        const focalLength = parseInt(document.getElementById('focalLength').value);
+        const cameraType = document.getElementById('cameraType').value;
+        const dateInput = document.getElementById('currentDate').value;
+        const sortBy = document.getElementById('sortBy')?.value || 'suitability';
+        const filterType = document.getElementById('filterType')?.value || 'all';
+        const maxDifficulty = parseInt(document.getElementById('maxDifficulty')?.value || '5');
+        const minAltitude = parseInt(document.getElementById('minAltitude')?.value || '20');
+        
+        if (!focalLength) {
+            document.getElementById('targetList').innerHTML = '<p class="text-center text-gray-500 col-span-full">Please enter your focal length first.</p>';
+            document.getElementById('targetCount').textContent = '0 targets found';
+            return;
+        }
+
+        const fov = updateCalculations();
+        if (!fov) return;
+
+        let currentDate;
+        if (dateInput) {
+            currentDate = new Date(dateInput);
+        } else {
+            currentDate = new Date();
+        }
+
+        const currentMonth = currentDate.getMonth();
+        const moonPhaseCategory = updateMoonDisplay(currentDate);
+
+        // First filter by basic suitability (month, moon, FOV compatibility)
+        let suitableTargets = targets.filter(target => 
+            isTargetSuitable(target, fov, focalLength, moonPhaseCategory, currentMonth)
+        );
+
+        // Apply additional filters
+        suitableTargets = filterTargets(suitableTargets, filterType, maxDifficulty, minAltitude, currentDate);
+
+        // Sort targets
+        suitableTargets = sortTargets(suitableTargets, sortBy, currentDate, focalLength, fov);
+
+        const targetList = document.getElementById('targetList');
+        targetList.innerHTML = '';
+
+        // Update target count
+        document.getElementById('targetCount').textContent = `${suitableTargets.length} targets found`;
+
+        if (suitableTargets.length === 0) {
+            targetList.innerHTML = '<p class="text-center text-gray-500 col-span-full">No targets match your current filters. Try reducing difficulty filter or minimum altitude.</p>';
+            return;
+        }
+
+        suitableTargets.forEach(target => {
+            const recommendations = generateRecommendations(target, focalLength, fov, moonPhaseCategory);
+            const difficulty = ['Very Easy', 'Easy', 'Moderate', 'Hard', 'Very Hard'][target.difficulty - 1];
+            const brightness = ['Very Faint', 'Faint', 'Moderate', 'Bright', 'Very Bright'][target.brightness - 1];
+            const altitude = calculateAltitude(target, currentDate);
+            
+            // Determine difficulty tag class
+            let difficultyClass = 'tag-difficulty-easy';
+            if (target.difficulty > 3) difficultyClass = 'tag-difficulty-hard';
+            else if (target.difficulty > 2) difficultyClass = 'tag-difficulty-medium';
+            
+            const card = document.createElement('div');
+            card.className = 'target-item';
+            card.innerHTML = `
+                <h3>${target.name}</h3>
+                <p>${target.description}</p>
+                <div class="target-tags">
+                    <span class="target-tag tag-brightness">${brightness}</span>
+                    <span class="target-tag ${difficultyClass}">${difficulty}</span>
+                    <span class="target-tag tag-size">${target.size.width.toFixed(1)}' × ${target.size.height.toFixed(1)}'</span>
+                    <span class="target-tag tag-altitude">${altitude.toFixed(0)}° alt</span>
+                    ${target.catalog ? `<span class="target-tag tag-catalog">${target.catalog}</span>` : ''}
+                </div>
+            `;
+            card.onclick = () => showDetails(target, recommendations, fov);
+            targetList.appendChild(card);
+        });
+    }
+
+    function showDetails(target, recommendations, fov) {
+        document.getElementById('modalTitle').textContent = target.name;
+        document.getElementById('modalDescription').textContent = target.description;
+        
+        const filterRecommended = recommendations.filter.includes('RECOMMENDED') || recommendations.filter.includes('HIGHLY');
+        document.getElementById('modalFilter').innerHTML = `
+            <strong>${filterRecommended ? 'Filter Recommended' : 'Filter Not Recommended'}:</strong><br>
+            ${recommendations.filter}`;
+        
+        document.getElementById('modalSettings').innerHTML = `
+            <strong>Recommended Settings for Bortle 9:</strong><br>
+            ${recommendations.settings}<br><br>
+            <strong>Catalog:</strong> ${target.catalog || 'N/A'}<br>
+            <strong>Coordinates:</strong> RA ${target.coordinates?.ra || 'N/A'}, Dec ${target.coordinates?.dec || 'N/A'}<br>
+            <strong>Target Size:</strong> ${target.size.width}' × ${target.size.height}' arcminutes<br>
+            <strong>Your FOV:</strong> ${fov.width.toFixed(1)}' × ${fov.height.toFixed(1)}' arcminutes<br>
+            <strong>Optimal Focal Range:</strong> ${target.minFocalLength}mm - ${target.maxFocalLength}mm`;
+        
+        document.getElementById('modalNotes').textContent = recommendations.notes;
+
+        document.getElementById('targetModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('targetModal').style.display = 'none';
+    }
+
+    // Event listeners
+    document.getElementById('focalLength').addEventListener('input', updateCalculations);
+    document.getElementById('cameraType').addEventListener('change', updateCalculations);
+    document.getElementById('currentDate').addEventListener('change', updateTargets);
+    
+    // Add sort and filter event listeners
+    ['sortBy', 'filterType', 'maxDifficulty', 'minAltitude'].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('change', updateTargets);
+        }
+    });
+
+    // Initialize with current date and targets
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('currentDate').value = `${yyyy}-${mm}-${dd}`;
+        
+        // Set default focal length from your guide
+        document.getElementById('focalLength').value = '1360';
+        
+        // Initialize calculations and moon display
+        updateCalculations();
+        updateMoonDisplay(today);
+        updateTargets();
+    });
+
+</script>
+
+</body>
+</html>
