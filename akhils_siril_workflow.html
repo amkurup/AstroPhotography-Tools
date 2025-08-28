@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akhil's astro workflow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Roboto+Slab:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #121417;
+            --bg-secondary: #21252b;
+            --bg-tertiary: #3a3f4b;
+            --text-primary: #c8ccd4;
+            --text-secondary: #828a9a;
+            --accent-primary: #61afef;
+            --accent-secondary: #c678dd;
+            --highlight-bg: #3c4049;
+            --highlight-text: #e5c07b;
+            --note-bg: #282c34;
+            --note-border: var(--accent-primary);
+            --header-border: #3c4049;
+            --table-border: #4b5263;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --danger-color: #e06c75;
+            --progress-track: #2a2f39;
+            --progress-fill: linear-gradient(90deg, #61afef, #c678dd);
+            --ring: 0 0 0 3px rgba(97, 175, 239, 0.35);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background:
+                radial-gradient(1200px 600px at 10% -10%, rgba(97, 175, 239, 0.06), transparent 60%),
+                radial-gradient(1000px 500px at 90% -20%, rgba(198, 120, 221, 0.06), transparent 60%),
+                var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            margin: 0;
+            padding: 2rem;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-secondary);
+            padding: 2.5rem 3.5rem;
+            border-radius: 16px;
+            box-shadow: 0 12px 35px var(--shadow-color);
+            border: 1px solid var(--header-border);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--header-border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: linear-gradient(180deg, rgba(33,37,43,0.95), rgba(33,37,43,0.85));
+            backdrop-filter: saturate(1.1) blur(6px);
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Roboto Slab', serif;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        header p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+            border-bottom: 1px solid var(--header-border);
+            padding-bottom: 0.85rem;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-right: 2rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .phase {
+            margin-bottom: 4rem;
+        }
+
+        .checklist-item {
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 14px;
+            border: 1px solid var(--header-border);
+            border-radius: 10px;
+            background: linear-gradient(180deg, rgba(40,44,52,0.5), rgba(40,44,52,0.35));
+            transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+        }
+
+        .checklist-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+            border-color: #596073;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            appearance: none;
+            background-color: var(--bg-tertiary);
+            border: 2px solid var(--table-border);
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 18px;
+            margin-top: 7px;
+            min-width: 22px;
+            min-height: 22px;
+            position: relative;
+            transition: all 0.2s ease-in-out;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.35);
+        }
+
+        .checklist-item input[type="checkbox"]:checked {
+            background-color: var(--accent-primary);
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
+        }
+
+        .checklist-item input[type="checkbox"]:checked::after {
+            content: '✔';
+            position: absolute;
+            color: var(--bg-secondary);
+            font-size: 16px;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .checklist-item input[type="checkbox"]:focus-visible {
+            outline: none;
+            box-shadow: var(--ring);
+        }
+
+        .checklist-item label {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .checklist-item .item-content {
+            flex-grow: 1;
+        }
+
+        .highlight-term {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-text);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+
+        .note {
+            background-color: var(--note-bg);
+            border-left: 5px solid var(--note-border);
+            padding: 15px 20px;
+            margin-top: 12px;
+            border-radius: 8px;
+            font-size: 0.98em;
+            color: var(--text-secondary);
+        }
+
+        .note a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .note a:hover {
+            text-decoration: underline;
+        }
+
+        .note strong {
+            color: #98C379;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--table-border);
+        }
+
+        th,
+        td {
+            padding: 18px;
+            text-align: left;
+            border-bottom: 1px solid var(--table-border);
+        }
+
+        th {
+            background-color: var(--bg-tertiary);
+            color: var(--accent-primary);
+            font-weight: 700;
+            font-family: 'Roboto Slab', serif;
+        }
+
+        td {
+            background-color: var(--bg-secondary);
+        }
+
+        td strong {
+            color: var(--text-primary);
+        }
+
+        tbody tr:hover td {
+            background-color: #2c313a;
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+
+        .choice-button-container {
+            display: none !important;
+        }
+
+        .choice-button {
+            flex: 1;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--table-border);
+            padding: 16px;
+            font-size: 1.1em;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .choice-button:hover {
+            background-color: #4b5263;
+            border-color: var(--accent-primary);
+        }
+
+        .choice-button.active {
+            background-color: var(--accent-primary);
+            color: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        button#resetButton {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.05em;
+            font-weight: 700;
+            font-family: 'Lato', sans-serif;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        button#resetButton:hover {
+            background-color: #be5046;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .palette-selector {
+            background-color: var(--note-bg);
+            border: 1px solid var(--header-border);
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+
+        .palette-selector label {
+            font-weight: 700;
+            color: var(--accent-secondary);
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        .palette-selector select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--table-border);
+            font-family: 'Lato', sans-serif;
+            font-size: 1em;
+        }
+
+        .palette-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--header-border);
+        }
+
+        .palette-info h4 {
+            margin-top: 0;
+            color: var(--text-primary);
+        }
+
+        .palette-info pre {
+            background-color: var(--bg-primary);
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: var(--text-secondary);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .palette-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: .5rem;
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--table-border);
+            padding: 8px 12px;
+            font-size: .95rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5263;
+            border-color: var(--accent-primary);
+        }
+
+        .target-selector-container,
+        .project-manager-container {
+            background-color: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            border: 1px solid var(--header-border);
+        }
+
+        .selectors-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .selectors-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .select-card {
+            background: linear-gradient(180deg, rgba(40,44,52,0.55), rgba(40,44,52,0.35));
+            border: 1px solid var(--header-border);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transition: border-color .15s ease, transform .15s ease;
+        }
+
+        .select-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .select-card label {
+            margin-bottom: .5rem;
+            display: block;
+        }
+
+        .project-manager-container label,
+        .target-selector-container label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .project-manager-container input,
+        .project-manager-container select,
+        .target-selector-container select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--table-border);
+            font-family: 'Lato', sans-serif;
+            font-size: 1em;
+            margin-bottom: 1rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c8ccd4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px 16px;
+            padding-right: 42px;
+        }
+
+        .project-manager-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .project-manager-buttons button {
+            flex-grow: 1;
+            padding: 10px 15px;
+            font-size: 1em;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--table-border);
+        }
+
+        #newProjectButton {
+            background-color: var(--accent-primary);
+            color: var(--bg-secondary);
+        }
+
+        #deleteProjectButton {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Progress Bar */
+        .progress {
+            margin-top: 1.25rem;
+        }
+
+        .progress-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .progress-track {
+            height: 10px;
+            background: var(--progress-track);
+            border-radius: 999px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.35);
+        }
+
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--progress-fill);
+            transition: width 200ms ease;
+        }
+
+        #progress-count {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Collapsible phases */
+        .phase .toggle-btn {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid var(--header-border);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+        }
+
+        .phase .toggle-btn:hover {
+            background: #4b5263;
+            border-color: var(--accent-primary);
+        }
+
+        .phase.collapsed .checklist-item,
+        .phase.collapsed h3,
+        .phase.collapsed .palette-selector,
+        .phase.collapsed table,
+        .phase.collapsed p,
+        .phase.collapsed .note {
+            display: none;
+        }
+
+        .phase.collapsed {
+            margin-bottom: 1rem;
+        }
+
+        .project-manager-container h3 {
+            position: relative;
+            padding-right: 2.25rem;
+        }
+
+        .project-manager-container.collapsed > :not(h3) {
+            display: none;
+        }
+
+        /* Compact mode */
+        body.compact .note {
+            display: none;
+        }
+
+        body.compact .checklist-item {
+            padding: 8px 10px;
+        }
+
+        body.compact .phase {
+            margin-bottom: 2rem;
+        }
+
+        body.compact h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 900px) {
+            .container {
+                padding: 1.75rem 1.25rem;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .selectors-wrapper {
+                flex-direction: column;
+            }
+
+            .choice-button-container {
+                flex-direction: column;
+            }
+
+            .checklist-item {
+                flex-direction: row;
+            }
+        }
+
+        .search-tools {
+            margin-top: 1rem;
+            display: flex;
+            gap: .5rem;
+            justify-content: center;
+        }
+
+        .search-tools input[type="search"] {
+            width: min(680px, 90%);
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--table-border);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-tools input[type="search"]:focus {
+            box-shadow: var(--ring);
+        }
+
+        .search-tools button {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--table-border);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .search-tools button:hover {
+            background: #4b5263;
+            border-color: var(--accent-primary);
+        }
+
+        .search-mark {
+            background: rgba(255, 221, 87, 0.35);
+            color: #ffd782;
+            padding: 0 .15em;
+            border-radius: 4px;
+        }
+
+        .fab-next {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 20;
+            background: var(--accent-primary);
+            color: var(--bg-secondary);
+            border: none;
+            border-radius: 999px;
+            padding: 14px 18px;
+            font-weight: 800;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .fab-next:hover {
+            filter: brightness(1.05);
+            transform: translateY(-1px);
+        }
+
+        .fab-next:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .fab-next .arrow {
+            font-size: 1.1rem;
+        }
+
+        @keyframes pulseOutline {
+            0% {
+                box-shadow: 0 0 0 0 rgba(97, 175, 239, 0.6);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(97, 175, 239, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(97, 175, 239, 0);
+            }
+        }
+
+        .pulse {
+            animation: pulseOutline 900ms ease-out 1;
+            border-color: var(--accent-primary) !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Akhil's Astro Workflow</h1>
+            <p>An interactive guide for processing astrophotography data. Progress is
+                saved in your browser for your next session.</p>
+            <div class="progress" aria-live="polite">
+                <div class="progress-top">
+                    <span>Progress</span>
+                    <span id="progress-count">0/0</span>
+                </div>
+                <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div id="progress-fill"></div>
+                </div>
+            </div>
+            <div class="search-tools" role="search">
+                <input id="search-steps" type="search" placeholder="Search steps, phases, tips..." aria-label="Search steps" />
+                <button id="clear-search" type="button" aria-label="Clear search">Clear</button>
+                <label for="compact-mode-toggle" style="display:inline-flex;align-items:center;gap:.5rem;background:var(--bg-tertiary);padding:8px 12px;border:1px solid var(--table-border);border-radius:999px;">
+                    <input id="compact-mode-toggle" type="checkbox" style="accent-color: var(--accent-primary);">
+                    Compact
+                </label>
+            </div>
+        </header>
+
+        <div class="project-manager-container">
+            <h3>Project Manager <button id="pm-collapse-btn" class="toggle-btn" type="button" aria-label="Toggle section">−</button></h3>
+            <label for="project-selector">Load Existing Project:</label>
+            <select id="project-selector">
+                <option value="">-- Select a Project --</option>
+            </select>
+            <label for="project-name">Or Create a New Project:</label>
+            <input type="text" id="project-name" placeholder="e.g., M31 - August Session">
+            <div class="project-manager-buttons">
+                <button id="newProjectButton">Clear for New Project</button>
+                <button id="deleteProjectButton">Delete Selected Project</button>
+            </div>
+            <div class="note" aria-live="polite" style="margin-top:1rem;">
+                Projects are saved only in this browser (localStorage). Use Export/Import below to back up or move projects to another device.
+            </div>
+            <div class="project-manager-buttons" style="margin-top: 0.75rem;">
+                <button id="exportSelectedProjectButton" title="Export only the selected/entered project">Export Selected</button>
+                <button id="exportAllProjectsButton" title="Export all saved projects">Export All</button>
+                <button id="importProjectsButton" title="Import projects from a JSON file">Import JSON</button>
+                <input id="importProjectsInput" type="file" accept="application/json" style="display:none" />
+            </div>
+        </div>
+
+        <div class="target-selector-container">
+            <div class="selectors-wrapper">
+                <div class="select-card">
+                    <label for="session-type-choice">Session Type</label>
+                    <select id="session-type-choice">
+                        <option value="dual-band">Dual-Band (L-Extreme, etc.)</option>
+                        <option value="broadband">Broadband OSC (Galaxies, etc.)</option>
+                    </select>
+                </div>
+                <div class="select-card">
+                    <label for="target-type-choice">Target Type</label>
+                    <select id="target-type-choice">
+                        <option value="large-nebula">Large, Diffuse Nebula</option>
+                        <option value="small-nebula">Small / High-Detail Nebula</option>
+                        <option value="galaxy">Galaxy / Star Cluster</option>
+                    </select>
+                </div>
+                <div class="select-card">
+                    <label for="night-type-choice">Night Mode</label>
+                    <select id="night-type-choice">
+                        <option value="single">Single Night</option>
+                        <option value="multi">Multi-Night</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="dual-band-workflow">
+            <div id="single-night-workflow-db">
+                <!-- DUAL BAND SINGLE NIGHT CONTENT -->
+                <div class="phase">
+                    <h2>Phase 1: Calibration & Extraction</h2>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-s1-step1">
+                        <div class="item-content">
+                            <label for="db-s1-step1"><strong>Organize Files:</strong> Create a project folder with <span
+                                    class="highlight-term">lights</span>, <span class="highlight-term">darks</span>,
+                                <span class="highlight-term">flats</span>, and <span
+                                    class="highlight-term">biases</span> subfolders.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-s1-step2">
+                        <div class="item-content">
+                            <label for="db-s1-step2"><strong>Run Extraction Script:</strong> In Siril, set the home
+                                directory to your project folder. Run the built-in script: <span
+                                    class="highlight-term">Scripts</span> -> <span
+                                    class="highlight-term">OSC_Extract_HaOIII</span>.</label>
+                            <div class="note">
+                                This script calibrates your files and separates the Ha and OIII signals, creating two
+                                new sequences in your `process` folder.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="phase">
+                    <h2>Phase 2: Create Master Files</h2>
+                    <h3>2a: Process OIII Channel</h3>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-s1-step3">
+                        <div class="item-content">
+                            <label for="db-s1-step3"><strong>Cull OIII Frames:</strong> Load the <span
+                                    class="highlight-term">OIII_pp_lights</span> sequence and exclude any bad
+                                frames.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-s1-step4">
+                        <div class="item-content">
+                            <label for="db-s1-step4"><strong>Stack OIII:</strong> Register the culled OIII sequence,
+                                then stack the result to create <span
+                                    class="highlight-term">OIII_stacked.fit</span>.</label>
+                        </div>
+                    </div>
+                    <h3>2b: Process Ha Channel</h3>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-s1-step5">
+                        <div class="item-content">
+                            <label for="db-s1-step5"><strong>Cull Ha Frames:</strong> Load the <span
+                                    class="highlight-term">Ha_pp_lights</span> sequence and exclude any bad
+                                frames.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-s1-step6">
+                        <div class="item-content">
+                            <label for="db-s1-step6"><strong>Stack Ha with Drizzle:</strong> Load the culled <span
+                                    class="highlight-term">Ha_pp_lights</span> sequence. In the <span
+                                    class="highlight-term">Registration</span> tab, select <span
+                                    class="highlight-term">Drizzle</span>, set <strong>Scale</strong> to <span
+                                    class="highlight-term">2.0</span> and <strong>Drop shrink</strong> to <span
+                                    class="highlight-term">0.5</span>. Register, then stack to create <span
+                                    class="highlight-term">Ha_stacked.fit</span>.</label>
+                            <div class="note">
+                                <strong>Why Drizzle Ha?</strong> Drizzle is essential here to restore the resolution of
+                                the Ha channel. We don't drizzle OIII because it doesn't suffer the same resolution
+                                loss.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="multi-night-workflow-db" style="display: none;">
+                <!-- DUAL BAND MULTI NIGHT CONTENT -->
+                <div class="phase">
+                    <h2>Phase 1: Automated Processing with Sirilic</h2>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-m1-step1">
+                        <div class="item-content">
+                            <label for="db-m1-step1"><strong>Configure Sirilic Project:</strong> Create a new project in
+                                Sirilic. Point it to your folders containing all your lights and calibration frames from
+                                all sessions.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-m1-step2">
+                        <div class="item-content">
+                            <label for="db-m1-step2"><strong>Define Layers:</strong> In Sirilic, define your two main
+                                output layers: <span class="highlight-term">Ha</span> and <span
+                                    class="highlight-term">OIII</span>.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-m1-step3">
+                        <div class="item-content">
+                            <label for="db-m1-step3"><strong>Configure Drizzle for Ha Layer:</strong> In the layer
+                                settings for your Ha channel, enable drizzle and set the scale to <span
+                                    class="highlight-term">2.0</span>.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-m1-step4">
+                        <div class="item-content">
+                            <label for="db-m1-step4"><strong>Configure Final Alignment:</strong> Ensure Sirilic is set
+                                to align the final stacked layers to each other.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-m1-step5">
+                        <div class="item-content">
+                            <label for="db-m1-step5"><strong>Run Sirilic:</strong> Execute the process. Sirilic will
+                                automate the entire pre-processing, extraction, registration, and stacking
+                                workflow.</label>
+                            <div class="note">
+                                <strong>Manual Culling Tip:</strong> For best results, cull your raw light frames
+                                *before* running Sirilic. Use Siril's Blink feature to review your lights and move any
+                                bad ones to a separate folder.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="common-dual-band-steps">
+                <!-- DUAL BAND COMMON STEPS -->
+                <div class="phase" id="db-common-phase-1">
+                    <h2 data-phase-single="Phase 3: Align & Process Masters"
+                        data-phase-multi="Phase 2: Align & Process Masters"></h2>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-c-step1">
+                        <div class="item-content">
+                            <label for="db-c-step1"><strong>Align Masters:</strong> Register your two stacked masters
+                                (<span class="highlight-term">Ha_stacked.fit</span> and <span
+                                    class="highlight-term">OIII_stacked.fit</span>) to each other to perfectly align
+                                them and crop to the common area.</label>
+                            <div class="note">
+                                <strong>How-To:</strong> Create a new folder, copy both masters into it, set it as
+                                Siril's home directory, use the `Conversion` tab to make a 2-frame sequence, and then
+                                `Register` that sequence.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-c-step2">
+                        <div class="item-content">
+                            <label for="db-c-step2"><strong>Final Crop:</strong> Draw a crop on one aligned master to
+                                remove bad edges. Apply the *exact same crop* to the other master.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-c-step3">
+                        <div class="item-content">
+                            <label for="db-c-step3"><strong>Background Extraction:</strong> Run <span
+                                    class="highlight-term">Background Extraction</span> on each of the cropped Ha and
+                                OIII masters separately.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-c-step4">
+                        <div class="item-content">
+                            <label for="db-c-step4"><strong>Denoise (Linear):</strong> Run the <span
+                                    class="highlight-term">CC_Denoise</span> script on each linear master. Ensure the
+                                <strong>Linear</strong> box is checked.</label>
+                            <div class="note">
+                                <a href="#appendix">See the Appendix</a> for recommended starting values.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-c-step5">
+                        <div class="item-content">
+                            <label for="db-c-step5"><strong>Balance Signals:</strong> Open your processed OIII image.
+                                Use <span class="highlight-term">Image Processing</span> -> <span
+                                    class="highlight-term">Linear Match</span>, with the processed Ha image as the
+                                "Reference Image". <strong>Save</strong> the matched OIII image.</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="phase" id="db-common-phase-2">
+                    <h2 data-phase-single="Phase 4: Color & Enhancement"
+                        data-phase-multi="Phase 3: Color & Enhancement"></h2>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="db-c-step6">
+                        <div class="item-content">
+                            <label for="db-c-step6"><strong>Create Color Image:</strong> Combine your Ha and OIII
+                                masters into a color image. For creative control, use the <span
+                                    class="highlight-term">Pixel Math</span> tool with the formulas below.</label>
+                            <div class="palette-selector">
+                                <label for="palette-choice">Choose a Palette:</label>
+                                <select id="palette-choice">
+                                    <option value="hoo_standard">Standard HOO (Gold & Cyan)</option>
+                                    <option value="hoo_custom">Custom HOO (Orange & Teal)</option>
+                                    <option value="dynamic_blend">Dynamic Blend (Red & Blue)</option>
+                                    <option value="sho_hubble">SHO (Hubble Palette)</option>
+                                    <option value="hso_custom">HSO Palette</option>
+                                </select>
+                                <div id="palette-info-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="broadband-workflow" style="display: none;">
+            <div id="single-night-workflow-bb">
+                <!-- BROADBAND SINGLE NIGHT WORKFLOW CONTENT -->
+                <div class="phase">
+                    <h2>Phase 1: Calibration</h2>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-s1-step1">
+                        <div class="item-content">
+                            <label for="bb-s1-step1"><strong>Organize Files:</strong> Create a project folder with <span
+                                    class="highlight-term">lights</span>, <span class="highlight-term">darks</span>,
+                                <span class="highlight-term">flats</span>, and <span
+                                    class="highlight-term">biases</span> subfolders.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-s1-step2">
+                        <div class="item-content">
+                            <label for="bb-s1-step2"><strong>Run Calibration Script:</strong> In Siril, set the home
+                                directory to your project folder. Run the built-in script: <span
+                                    class="highlight-term">Scripts</span> -> <span
+                                    class="highlight-term">OSC_Preprocessing_WithoutDB</span>.</label>
+                            <div class="note">
+                                This script calibrates your light frames but stops before Debayering, leaving them as a
+                                raw CFA sequence (<span class="highlight-term">pp_light_...</span>) ready for the next
+                                steps.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="phase">
+                    <h2>Phase 2: Culling & Stacking with Bayer Drizzle</h2>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-s1-step3">
+                        <div class="item-content">
+                            <label for="bb-s1-step3"><strong>Manual Culling:</strong> Load the calibrated <span
+                                    class="highlight-term">pp_light_...</span> sequence. Review each frame and exclude
+                                any with issues.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-s1-step4">
+                        <div class="item-content">
+                            <label for="bb-s1-step4"><strong>Register & Stack with Bayer Drizzle:</strong> Register the
+                                culled sequence using the <span class="highlight-term">Bayer Drizzle</span> registration
+                                method (Scale 1.0). Then, stack the resulting registered sequence.</label>
+                            <div class="note">
+                                <strong>Bayer Drizzle is Key:</strong> This process is a superior alternative to
+                                standard Debayering. It uses information from your dithered frames to reconstruct color
+                                with higher fidelity and resolution.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="multi-night-workflow-bb" style="display: none;">
+                <!-- BROADBAND MULTI NIGHT WORKFLOW CONTENT -->
+                <div class="phase">
+                    <h2>Phase 1: Automated Processing with Sirilic</h2>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-m1-step1">
+                        <div class="item-content">
+                            <label for="bb-m1-step1"><strong>Configure Sirilic Project:</strong> Create a new project in
+                                Sirilic. Point it to your folders containing all your lights and calibration frames from
+                                all sessions.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-m1-step2">
+                        <div class="item-content">
+                            <label for="bb-m1-step2"><strong>Define Layer:</strong> In Sirilic, define a single main
+                                output layer (e.g., <span class="highlight-term">RGB</span>). Ensure it is set to
+                                process as a standard OSC/Broadband target.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-m1-step3">
+                        <div class="item-content">
+                            <label for="bb-m1-step3"><strong>Configure Bayer Drizzle:</strong> In the layer settings,
+                                ensure that Bayer Drizzle is the selected stacking method to achieve the best color and
+                                detail.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-m1-step4">
+                        <div class="item-content">
+                            <label for="bb-m1-step4"><strong>Run Sirilic:</strong> Execute the process. Sirilic will
+                                automate the entire pre-processing, calibration, registration, and stacking workflow for
+                                all your sessions.</label>
+                            <div class="note">
+                                <strong>Manual Culling Tip:</strong> For best results, cull your raw light frames
+                                *before* running Sirilic. Use Siril's Blink feature to review your lights and move any
+                                bad ones to a separate folder.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="common-broadband-steps">
+                <div class="phase">
+                    <h2>Phase 3: Linear Processing</h2>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-c-step5">
+                        <div class="item-content">
+                            <label for="bb-c-step5"><strong>Final Crop:</strong> Open your final stacked color image and
+                                crop out any remaining stacking artifacts.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-c-step6">
+                        <div class="item-content">
+                            <label for="bb-c-step6"><strong>Photometric Color Calibration:</strong> This is a crucial
+                                step for broadband. Plate solve the image, then run <span
+                                    class="highlight-term">Spectrophotometric Color Calibration (SPCC)</span> to get
+                                accurate star and galaxy colors.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-c-step7">
+                        <div class="item-content">
+                            <label for="bb-c-step7"><strong>Background Extraction:</strong> Run <span
+                                    class="highlight-term">Background Extraction</span> on the color-calibrated
+                                image.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-c-step8">
+                        <div class="item-content">
+                            <label for="bb-c-step8"><strong>Denoise (Linear):</strong> Run the <span
+                                    class="highlight-term">CC_Denoise</span> script on the linear color image. Ensure
+                                the <strong>Linear</strong> box is checked.</label>
+                            <div class="note">
+                                <a href="#appendix">See the Appendix</a> for recommended starting values.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="common-enhancement-steps">
+            <div class="phase" id="common-phase-2">
+                <h2 data-phase-single="Phase 4: Color & Enhancement" data-phase-multi="Phase 3: Color & Enhancement"
+                    data-phase-broadband="Phase 4: Enhancement"></h2>
+                <div class="checklist-item">
+                    <input type="checkbox" id="c-step7">
+                    <div class="item-content">
+                        <label for="c-step7"><strong>Remove Stars:</strong> Use Siril's <span
+                                class="highlight-term">StarNet++</span> tool on the processed **linear** color image to
+                            create a <span class="highlight-term">starless</span> and a <span
+                                class="highlight-term">stars_only</span> image.</label>
+                        <div class="note">
+                            <strong>Siril Tip:</strong> Check the "pre-stretch linear image" box in StarNet++. This
+                            helps the AI find stars more accurately on linear data.
+                        </div>
+                    </div>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="c-step8">
+                    <div class="item-content">
+                        <label for="c-step8"><strong>Stretch Starless Image:</strong> Use the <span
+                                class="highlight-term">StatisticalStretch</span> script on the <span
+                                class="highlight-term">starless</span> linear image to bring it to a non-linear
+                            state.</label>
+                        <div class="note" id="stretch-note-content"></div>
+                    </div>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="c-step9">
+                    <div class="item-content">
+                        <label for="c-step9"><strong>Sharpen Starless Image:</strong> Open the stretched <span
+                                class="highlight-term">starless</span> color image. Run the <span
+                                class="highlight-term">CC_Sharpen</span> script. Set <strong>Sharpening Mode</strong> to
+                            <span class="highlight-term">non-stellar</span> and adjust the sliders.</label>
+                        <div class="note" id="sharpen-note-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase" id="common-phase-3">
+                <h2 data-phase-single="Phase 5: Final Assembly" data-phase-multi="Phase 4: Final Assembly"
+                    data-phase-broadband="Phase 5: Final Assembly"></h2>
+                <div class="checklist-item">
+                    <input type="checkbox" id="c-step10">
+                    <div class="item-content">
+                        <label for="c-step10"><strong>Process Stars:</strong> Open the <span
+                                class="highlight-term">stars_only</span> image. Apply a gentle stretch (e.g.,
+                            ArcsinhStretch), adjust color saturation, or use star reduction as desired.</label>
+                    </div>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="c-step11">
+                    <div class="item-content">
+                        <label for="c-step11"><strong>Recombine Stars:</strong> Use the <span
+                                class="highlight-term">Star Recomposition</span> tool in Siril to add your processed
+                            stars back to your sharpened, starless nebula image.</label>
+                    </div>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="c-step12">
+                    <div class="item-content">
+                        <label for="c-step12"><strong>Final Touches:</strong> Make any final adjustments to curves or
+                            color saturation on the final composite image.</label>
+                    </div>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="c-step13">
+                    <div class="item-content">
+                        <label for="c-step13"><strong>Save Your Image:</strong> Save the final result as a 32-bit TIFF
+                            for maximum quality, and a separate copy as a JPG or PNG for sharing.</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="phase collapsed" id="appendix">
+            <h2>Appendix: Parameter Guide</h2>
+            <p>These are recommended <strong>starting points</strong>. Always start with low values and adjust based on
+                your results.</p>
+            <div class="note" style="margin-left: 0; margin-bottom: 2rem;">
+                <strong>A Note on Linear vs. Non-Linear Settings:</strong><br>
+                - The <span class="highlight-term">CC_Denoise</span> script may have a 'Linear' checkbox. It must be
+                <strong>checked</strong> when processing linear images.<br>
+                - The <span class="highlight-term">CC_Sharpen</span> script (v1.0.7+) does not have this option and
+                should only be used on <strong>non-linear (stretched)</strong> images.
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tool</th>
+                        <th>Target Type</th>
+                        <th>Recommended Settings</th>
+                        <th>Rationale & Key Considerations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Statistical Stretch</strong></td>
+                        <td><strong>Large, Diffuse Nebula</strong></td>
+                        <td id="stretch-params-large-nebula"><strong>Target Median:</strong> 0.10 -
+                            0.18<br><strong>Curves Boost:</strong> 0.0 - 0.05</td>
+                        <td>A gentle stretch is needed to reveal faint detail without amplifying noise or crushing the
+                            soft gradients of the nebula. The goal is subtlety.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Statistical Stretch</strong></td>
+                        <td><strong>Small / High-Detail Nebula</strong></td>
+                        <td id="stretch-params-small-nebula"><strong>Target Median:</strong> 0.15 -
+                            0.22<br><strong>Curves Boost:</strong> 0.05 - 0.10</td>
+                        <td>These targets have bright cores and can handle a slightly stronger stretch. This helps
+                            control the core while enhancing surrounding structure.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Statistical Stretch</strong></td>
+                        <td><strong>Galaxy / Star Cluster</strong></td>
+                        <td id="stretch-params-galaxy"><strong>Target Median:</strong> 0.18 - 0.25<br><strong>Curves
+                                Boost:</strong> 0.10 - 0.20</td>
+                        <td>Requires a more aggressive stretch to make the faint outer arms "pop." The higher median
+                            lifts the arms, and the boost adds defining contrast.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sharpening</strong></td>
+                        <td><strong>Large, Diffuse Nebula</strong></td>
+                        <td id="sharpen-params-large-nebula"><strong>Mode:</strong> <span
+                                class="highlight-term">non-stellar</span><br><strong>Amount:</strong> 0.20 -
+                            0.35<br><strong>Strength:</strong> Default</td>
+                        <td>These targets are soft by nature. A gentle touch enhances detail without creating a harsh,
+                            unnatural texture. Always use the `non-stellar` mode on a starless image for best results.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sharpening</strong></td>
+                        <td><strong>Small / High-Detail Nebula</strong></td>
+                        <td id="sharpen-params-small-nebula"><strong>Mode:</strong> <span
+                                class="highlight-term">non-stellar</span><br><strong>Amount:</strong> 0.30 -
+                            0.50<br><strong>Strength:</strong> Default</td>
+                        <td>Objects with more defined structures can handle slightly more aggressive sharpening. Still,
+                            start low and increase cautiously to avoid artifacts.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sharpening</strong></td>
+                        <td><strong>Galaxy / Star Cluster</strong></td>
+                        <td id="sharpen-params-galaxy"><strong>Mode:</strong> <span
+                                class="highlight-term">non-stellar</span><br><strong>Amount:</strong> 0.25 -
+                            0.45<br><strong>Strength:</strong> Default</td>
+                        <td>Treat galaxies as "non-stellar" objects. Be careful not to over-sharpen the core. The goal
+                            is to enhance dust lanes and spiral arms without making the core look artificial.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Denoising</strong></td>
+                        <td><strong>All Targets (from Bortle 9)</strong></td>
+                        <td><strong>Type:</strong> <span
+                                class="highlight-term">Luminance</span><br><strong>Amount:</strong> 0.40 - 0.60</td>
+                        <td>For light-polluted skies, noise is a primary issue. The `Luminance` setting is best practice
+                            as it aggressively targets brightness noise while preserving color information.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Denoising</strong></td>
+                        <td><strong>(Alternative for very noisy data)</strong></td>
+                        <td><strong>Type:</strong> <span class="highlight-term">Full</span><br><strong>Amount:</strong>
+                            0.30 - 0.50</td>
+                        <td>If the `Luminance` setting isn't enough, use `Full`. Apply it more gently, as it can soften
+                            fine color details if the amount is set too high.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-container">
+            <button id="resetButton">Reset Current Project Checklist</button>
+        </div>
+
+        <button id="next-step-fab" class="fab-next" title="Jump to next unchecked step">
+            Next step <span class="arrow">→</span>
+        </button>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const UI_PREFS_KEY = 'akhilAstroUiPrefs';
+        const loadPrefs = () => { try { return JSON.parse(localStorage.getItem(UI_PREFS_KEY)) || {}; } catch { return {}; } };
+        const savePrefs = (p) => { localStorage.setItem(UI_PREFS_KEY, JSON.stringify({ ...loadPrefs(), ...p })); };
+
+        // Elements
+        const body = document.body;
+        const pmContainer = document.querySelector('.project-manager-container');
+        const pmBtn = document.getElementById('pm-collapse-btn');
+        const compactToggle = document.getElementById('compact-mode-toggle');
+        const sessionSel = document.getElementById('session-type-choice');
+        const nightSel = document.getElementById('night-type-choice');
+        const dualBand = document.getElementById('dual-band-workflow');
+        const broadband = document.getElementById('broadband-workflow');
+        const snDb = document.getElementById('single-night-workflow-db');
+        const mnDb = document.getElementById('multi-night-workflow-db');
+        const snBb = document.getElementById('single-night-workflow-bb');
+        const mnBb = document.getElementById('multi-night-workflow-bb');
+        const progressCountEl = document.getElementById('progress-count');
+        const progressFillEl = document.getElementById('progress-fill');
+        const progressTrackEl = document.querySelector('.progress-track');
+
+        // Collapsible phases with toggle buttons
+        function initCollapsibles() {
+          document.querySelectorAll('.phase').forEach(phase => {
+            const h2 = phase.querySelector('h2');
+            if (!h2) return;
+            if (!h2.querySelector('.toggle-btn')) {
+              const btn = document.createElement('button');
+              btn.className = 'toggle-btn';
+              btn.type = 'button';
+              btn.setAttribute('aria-label', 'Toggle section');
+              btn.textContent = '−';
+              h2.appendChild(btn);
+              btn.addEventListener('click', () => {
+                const collapsed = phase.classList.toggle('collapsed');
+                btn.textContent = collapsed ? '+' : '−';
+                updateProgress();
+              });
+            }
+          });
+        }
+
+        // Collapse Appendix by default on first load
+        function collapseAppendixByDefault() {
+          const appendix = document.getElementById('appendix');
+          const phase = appendix ? (appendix.classList.contains('phase') ? appendix : appendix.closest('.phase')) : null;
+          if (phase && !phase.classList.contains('collapsed')) {
+            phase.classList.add('collapsed');
+            const b = phase.querySelector('.toggle-btn');
+            if (b) b.textContent = '+';
+          }
+        }
+
+        // Project Manager collapse toggle + persistence
+        if (pmBtn && pmContainer) {
+          pmBtn.addEventListener('click', () => {
+            pmContainer.classList.toggle('collapsed');
+            pmBtn.textContent = pmContainer.classList.contains('collapsed') ? '+' : '−';
+            savePrefs({ pmCollapsed: pmContainer.classList.contains('collapsed') });
+          });
+        }
+
+        // Restore UI prefs
+        const prefs = loadPrefs();
+        if (prefs.compact) {
+          body.classList.add('compact');
+          if (compactToggle) compactToggle.checked = true;
+        }
+        if (typeof prefs.pmCollapsed === 'boolean' && pmContainer) {
+          pmContainer.classList.toggle('collapsed', prefs.pmCollapsed);
+          if (pmBtn) pmBtn.textContent = pmContainer.classList.contains('collapsed') ? '+' : '−';
+        }
+        if (prefs.sessionType && sessionSel) sessionSel.value = prefs.sessionType;
+        if (prefs.nightType && nightSel) nightSel.value = prefs.nightType;
+
+        // Compact mode persistence
+        if (compactToggle) {
+          compactToggle.addEventListener('change', () => {
+            body.classList.toggle('compact', compactToggle.checked);
+            savePrefs({ compact: compactToggle.checked });
+          });
+        }
+
+        // Session & Night selectors wiring
+        function applyNight() {
+          const n = nightSel ? nightSel.value : 'single';
+          const isBroad = sessionSel && sessionSel.value === 'broadband';
+          if (isBroad) {
+            if (snBb) snBb.style.display = n === 'single' ? 'block' : 'none';
+            if (mnBb) mnBb.style.display = n === 'multi' ? 'block' : 'none';
+          } else {
+            if (snDb) snDb.style.display = n === 'single' ? 'block' : 'none';
+            if (mnDb) mnDb.style.display = n === 'multi' ? 'block' : 'none';
+          }
+          savePrefs({ nightType: n });
+          updateProgress();
+        }
+
+        function applySession() {
+          const isBroad = sessionSel && sessionSel.value === 'broadband';
+          if (dualBand) dualBand.style.display = isBroad ? 'none' : 'block';
+          if (broadband) broadband.style.display = isBroad ? 'block' : 'none';
+          savePrefs({ sessionType: sessionSel ? sessionSel.value : 'dual-band' });
+          applyNight();
+        }
+
+        if (sessionSel) sessionSel.addEventListener('change', applySession);
+        if (nightSel) nightSel.addEventListener('change', applyNight);
+
+        // Progress
+        function getVisibleCheckboxes() {
+          return Array.from(document.querySelectorAll('input[type="checkbox"]')).filter(cb => cb.offsetParent !== null);
+        }
+        function updateProgress() {
+          if (!progressCountEl || !progressFillEl || !progressTrackEl) return;
+          const visible = getVisibleCheckboxes();
+          const total = visible.length;
+          const checked = visible.filter(cb => cb.checked).length;
+          const pct = total ? Math.round((checked / total) * 100) : 0;
+          progressCountEl.textContent = `${checked}/${total}`;
+          progressFillEl.style.width = pct + '%';
+          progressTrackEl.setAttribute('aria-valuenow', String(pct));
+        }
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', updateProgress));
+
+        // Init
+        initCollapsibles();
+        collapseAppendixByDefault();
+        applySession();
+        updateProgress();
+      });
+    </script>
+
+</body>
+
+</html>
