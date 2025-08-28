@@ -11,24 +11,25 @@
         rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #121417;
-            --bg-secondary: #21252b;
-            --bg-tertiary: #3a3f4b;
-            --text-primary: #c8ccd4;
-            --text-secondary: #828a9a;
-            --accent-primary: #61afef;
-            --accent-secondary: #c678dd;
-            --highlight-bg: #3c4049;
-            --highlight-text: #e5c07b;
-            --note-bg: #282c34;
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --accent-primary: #58a6ff;
+            --accent-secondary: #a5a5ff;
+            --highlight-bg: #1f3a5f;
+            --highlight-text: #79c0ff;
+            --note-bg: #1c2128;
             --note-border: var(--accent-primary);
-            --header-border: #3c4049;
-            --table-border: #4b5263;
-            --shadow-color: rgba(0, 0, 0, 0.5);
-            --danger-color: #e06c75;
-            --progress-track: #2a2f39;
-            --progress-fill: linear-gradient(90deg, #61afef, #c678dd);
-            --ring: 0 0 0 3px rgba(97, 175, 239, 0.35);
+            --header-border: #30363d;
+            --table-border: #30363d;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --danger-color: #f85149;
+            --progress-track: #21262d;
+            --progress-fill: var(--accent-primary);
+            --ring: 0 0 0 3px rgba(88, 166, 255, 0.15);
+            --success-color: #56d364;
         }
 
         html {
@@ -37,37 +38,35 @@
 
         body {
             font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background:
-                radial-gradient(1200px 600px at 10% -10%, rgba(97, 175, 239, 0.06), transparent 60%),
-                radial-gradient(1000px 500px at 90% -20%, rgba(198, 120, 221, 0.06), transparent 60%),
-                var(--bg-primary);
+            background: var(--bg-primary);
             color: var(--text-primary);
-            line-height: 1.8;
+            line-height: 1.6;
             margin: 0;
-            padding: 2rem;
+            padding: 1.5rem;
             font-weight: 400;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
             background-color: var(--bg-secondary);
-            padding: 2.5rem 3.5rem;
-            border-radius: 16px;
-            box-shadow: 0 12px 35px var(--shadow-color);
+            padding: 2rem 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px var(--shadow-color);
             border: 1px solid var(--header-border);
         }
 
         header {
             text-align: center;
-            margin-bottom: 3.5rem;
-            padding-bottom: 2rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
             border-bottom: 1px solid var(--header-border);
             position: sticky;
             top: 0;
             z-index: 10;
-            background: linear-gradient(180deg, rgba(33,37,43,0.95), rgba(33,37,43,0.85));
-            backdrop-filter: saturate(1.1) blur(6px);
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(8px);
+            transition: padding 180ms ease;
         }
 
         h1,
@@ -77,17 +76,35 @@
         }
 
         h1 {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: var(--accent-primary);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
+            transition: opacity 180ms ease, transform 180ms ease, margin 180ms ease, max-height 180ms ease;
         }
 
         header p {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             color: var(--text-secondary);
-            max-width: 750px;
+            max-width: 600px;
             margin: 0 auto;
+            transition: opacity 180ms ease, transform 180ms ease, margin 180ms ease, max-height 180ms ease;
+        }
+
+        /* Header compact-on-scroll state */
+        header.compact-scrolled {
+            padding-bottom: 0.75rem;
+        }
+        
+        header .search-tools { 
+            transition: opacity 180ms ease, max-height 180ms ease, margin 180ms ease; 
+        }
+        
+        header.compact-scrolled .search-tools {
+            opacity: 0;
+            max-height: 0;
+            margin: 0;
+            pointer-events: none;
         }
 
         h2 {
@@ -115,48 +132,47 @@
         }
 
         .checklist-item {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1rem;
             display: flex;
             align-items: flex-start;
-            padding: 12px 14px;
+            padding: 16px 20px;
             border: 1px solid var(--header-border);
-            border-radius: 10px;
-            background: linear-gradient(180deg, rgba(40,44,52,0.5), rgba(40,44,52,0.35));
-            transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            transition: all 150ms ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         .checklist-item:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-            border-color: #596073;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent-primary);
         }
 
         .checklist-item input[type="checkbox"] {
             appearance: none;
-            background-color: var(--bg-tertiary);
-            border: 2px solid var(--table-border);
-            border-radius: 5px;
+            background-color: white;
+            border: 2px solid var(--header-border);
+            border-radius: 4px;
             cursor: pointer;
-            margin-right: 18px;
-            margin-top: 7px;
-            min-width: 22px;
-            min-height: 22px;
+            margin-right: 16px;
+            margin-top: 4px;
+            min-width: 20px;
+            min-height: 20px;
             position: relative;
-            transition: all 0.2s ease-in-out;
-            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.35);
+            transition: all 0.2s ease;
         }
 
         .checklist-item input[type="checkbox"]:checked {
-            background-color: var(--accent-primary);
-            border-color: var(--accent-primary);
-            transform: scale(1.05);
+            background-color: var(--success-color);
+            border-color: var(--success-color);
         }
 
         .checklist-item input[type="checkbox"]:checked::after {
-            content: '✔';
+            content: '✓';
             position: absolute;
-            color: var(--bg-secondary);
-            font-size: 16px;
+            color: white;
+            font-size: 14px;
             font-weight: bold;
             top: 50%;
             left: 50%;
@@ -214,15 +230,14 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--table-border);
         }
 
         th,
         td {
-            padding: 18px;
+            padding: 12px 16px;
             text-align: left;
             border-bottom: 1px solid var(--table-border);
         }
@@ -243,7 +258,7 @@
         }
 
         tbody tr:hover td {
-            background-color: #2c313a;
+            background-color: var(--bg-tertiary);
         }
 
         table tr:last-child td {
@@ -264,89 +279,94 @@
             background-color: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--table-border);
-            padding: 16px;
+            padding: 12px;
             font-size: 1.1em;
-            font-weight: 700;
-            border-radius: 8px;
+            font-weight: 600;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .choice-button:hover {
-            background-color: #4b5263;
+            background-color: var(--accent-primary);
+            color: white;
             border-color: var(--accent-primary);
         }
 
         .choice-button.active {
             background-color: var(--accent-primary);
-            color: var(--bg-secondary);
+            color: white;
             border-color: var(--accent-primary);
         }
 
-        button#resetButton {
-            background-color: var(--danger-color);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            font-size: 1.05em;
-            font-weight: 700;
-            font-family: 'Lato', sans-serif;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        button#resetButton:hover {
-            background-color: #be5046;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-        }
+        /* Old resetButton style - will be overridden by modern style below */
 
         .palette-selector {
-            background-color: var(--note-bg);
+            background: var(--bg-secondary);
             border: 1px solid var(--header-border);
             padding: 20px;
             margin-top: 15px;
             border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         .palette-selector label {
             font-weight: 700;
             color: var(--accent-secondary);
-            margin-right: 10px;
+            margin-right: 12px;
             font-size: 1.1em;
         }
 
         .palette-selector select {
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 10px 14px;
+            border-radius: 8px;
             background-color: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--table-border);
             font-family: 'Lato', sans-serif;
             font-size: 1em;
+            transition: all 180ms ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c8ccd4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px 16px;
+            padding-right: 42px;
+        }
+
+        .palette-selector select:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .palette-selector select:focus {
+            outline: none;
+            box-shadow: var(--ring);
         }
 
         .palette-info {
-            margin-top: 15px;
-            padding-top: 15px;
+            margin-top: 18px;
+            padding-top: 18px;
             border-top: 1px solid var(--header-border);
         }
 
         .palette-info h4 {
             margin-top: 0;
+            margin-bottom: 12px;
             color: var(--text-primary);
+            font-size: 1.15rem;
         }
 
         .palette-info pre {
-            background-color: var(--bg-primary);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--header-border);
             padding: 15px;
             border-radius: 6px;
             white-space: pre-wrap;
             word-wrap: break-word;
-            color: var(--text-secondary);
+            color: var(--text-primary);
             font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
 
         .palette-actions {
@@ -356,26 +376,28 @@
         }
 
         .btn-secondary {
-            background-color: var(--bg-tertiary);
+            background: var(--bg-tertiary);
             color: var(--text-primary);
-            border: 1px solid var(--table-border);
-            padding: 8px 12px;
+            border: 1px solid var(--header-border);
+            padding: 8px 16px;
             font-size: .95rem;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 180ms ease;
         }
 
         .btn-secondary:hover {
-            background-color: #4b5263;
+            background: var(--accent-primary);
+            color: white;
             border-color: var(--accent-primary);
         }
 
         .target-selector-container,
         .project-manager-container {
-            background-color: var(--bg-primary);
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 3rem;
+            background-color: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
             border: 1px solid var(--header-border);
         }
 
@@ -392,17 +414,16 @@
         }
 
         .select-card {
-            background: linear-gradient(180deg, rgba(40,44,52,0.55), rgba(40,44,52,0.35));
+            background: var(--bg-secondary);
             border: 1px solid var(--header-border);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 1rem;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            transition: border-color .15s ease, transform .15s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: border-color .15s ease;
         }
 
         .select-card:hover {
             border-color: var(--accent-primary);
-            transform: translateY(-1px);
         }
 
         .select-card label {
@@ -445,28 +466,89 @@
             margin-top: 1rem;
         }
 
+        /* Modern button styles */
         .project-manager-buttons button {
             flex-grow: 1;
-            padding: 10px 15px;
-            font-size: 1em;
-            font-weight: 700;
+            padding: 10px 18px;
+            font-size: 0.95em;
+            font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid var(--table-border);
+            transition: all 200ms ease;
+            border: none;
         }
 
         #newProjectButton {
-            background-color: var(--accent-primary);
-            color: var(--bg-secondary);
-        }
-
-        #deleteProjectButton {
-            background-color: var(--danger-color);
+            background: var(--accent-primary);
             color: white;
         }
 
-        /* Progress Bar */
+        #newProjectButton:hover {
+            background: #3182ce;
+        }
+
+        #deleteProjectButton {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        #deleteProjectButton:hover {
+            background: #c53030;
+        }
+
+        button#resetButton {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.05em;
+            font-weight: 600;
+            font-family: 'Lato', sans-serif;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        button#resetButton:hover {
+            background: #c53030;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--bg-tertiary), #495066);
+            color: var(--text-primary);
+            border: none;
+            padding: 10px 16px;
+            font-size: .95rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 180ms ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, var(--accent-primary), #4a9eff);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(97, 175, 239, 0.25);
+        }
+
+        .search-tools button {
+            padding: 10px 16px;
+            border-radius: 20px;
+            border: none;
+            background: linear-gradient(135deg, var(--bg-tertiary), #495066);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 180ms ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .search-tools button:hover {
+            background: linear-gradient(135deg, var(--accent-primary), #4a9eff);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(97, 175, 239, 0.25);
+        }
         .progress {
             margin-top: 1.25rem;
         }
@@ -481,11 +563,10 @@
         }
 
         .progress-track {
-            height: 10px;
+            height: 8px;
             background: var(--progress-track);
-            border-radius: 999px;
+            border-radius: 4px;
             overflow: hidden;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.35);
         }
 
         #progress-fill {
@@ -493,6 +574,7 @@
             width: 0%;
             background: var(--progress-fill);
             transition: width 200ms ease;
+            border-radius: 4px;
         }
 
         #progress-count {
@@ -501,15 +583,46 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Collapsible phases */
+        /* Collapsed phases strip under progress when scrolled */
+        .collapsed-phases-strip {
+            display: none;
+            gap: .5rem;
+            margin-top: .5rem;
+            padding: .25rem 0;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        header.compact-scrolled .collapsed-phases-strip {
+            display: flex;
+            align-items: center;
+            animation: fadeSlideDown 180ms ease;
+        }
+        .phase-chip {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--header-border);
+            color: var(--text-primary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: border-color 120ms ease;
+        }
+        .phase-chip:hover { border-color: var(--accent-primary); }
+        .phase-chip .count { color: var(--text-secondary); margin-left: .35rem; font-variant-numeric: tabular-nums; }
+
+        /* Collapsible phases with smooth animations */
+        .phase {
+            transition: margin-bottom 240ms ease;
+        }
+        
         .phase .toggle-btn {
             position: absolute;
             right: 0;
             top: 50%;
             transform: translateY(-50%);
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
             border: 1px solid var(--header-border);
             background: var(--bg-tertiary);
             color: var(--text-primary);
@@ -517,21 +630,26 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+            transition: all 180ms ease;
+            font-size: 16px;
         }
 
         .phase .toggle-btn:hover {
-            background: #4b5263;
+            background: var(--accent-primary);
+            color: white;
             border-color: var(--accent-primary);
         }
 
-        .phase.collapsed .checklist-item,
-        .phase.collapsed h3,
-        .phase.collapsed .palette-selector,
-        .phase.collapsed table,
-        .phase.collapsed p,
-        .phase.collapsed .note {
-            display: none;
+        .phase .phase-content {
+            overflow: hidden;
+            transition: max-height 280ms ease, opacity 200ms ease;
+            max-height: 5000px;
+            opacity: 1;
+        }
+
+        .phase.collapsed .phase-content {
+            max-height: 0;
+            opacity: 0;
         }
 
         .phase.collapsed {
@@ -543,27 +661,20 @@
             padding-right: 2.25rem;
         }
 
-        .project-manager-container.collapsed > :not(h3) {
-            display: none;
+        /* Animate PM collapse using max-height + opacity */
+        .project-manager-container .pm-content {
+            overflow: hidden;
+            transition: max-height 240ms ease, opacity 180ms ease;
+            max-height: 1200px;
+            opacity: 1;
+        }
+        .project-manager-container.collapsed .pm-content {
+            max-height: 0;
+            opacity: 0;
         }
 
-        /* Compact mode */
-        body.compact .note {
-            display: none;
-        }
-
-        body.compact .checklist-item {
-            padding: 8px 10px;
-        }
-
-        body.compact .phase {
-            margin-bottom: 2rem;
-        }
-
-        body.compact h3 {
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-        }
+        /* Override previous blanket hide to enable animation */
+        .project-manager-container.collapsed > :not(h3) { display: block; }
 
         /* Responsive tweaks */
         @media (max-width: 900px) {
@@ -609,24 +720,26 @@
         }
 
         .search-tools button {
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--table-border);
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--header-border);
             background: var(--bg-tertiary);
             color: var(--text-primary);
             cursor: pointer;
+            transition: all 180ms ease;
         }
 
         .search-tools button:hover {
-            background: #4b5263;
+            background: var(--accent-primary);
+            color: white;
             border-color: var(--accent-primary);
         }
 
         .search-mark {
-            background: rgba(255, 221, 87, 0.35);
-            color: #ffd782;
-            padding: 0 .15em;
-            border-radius: 4px;
+            background: rgba(255, 221, 87, 0.3);
+            color: #ffd700;
+            padding: 0 .1em;
+            border-radius: 3px;
         }
 
         .fab-next {
@@ -635,21 +748,21 @@
             bottom: 24px;
             z-index: 20;
             background: var(--accent-primary);
-            color: var(--bg-secondary);
+            color: white;
             border: none;
-            border-radius: 999px;
-            padding: 14px 18px;
-            font-weight: 800;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: .5rem;
+            transition: all 180ms ease;
         }
 
         .fab-next:hover {
-            filter: brightness(1.05);
-            transform: translateY(-1px);
+            background: #3182ce;
         }
 
         .fab-next:disabled {
@@ -663,22 +776,25 @@
 
         @keyframes pulseOutline {
             0% {
-                box-shadow: 0 0 0 0 rgba(97, 175, 239, 0.6);
+                border-color: var(--accent-primary);
+                background-color: #1f3a5f;
             }
-
-            70% {
-                box-shadow: 0 0 0 8px rgba(97, 175, 239, 0);
-            }
-
             100% {
-                box-shadow: 0 0 0 0 rgba(97, 175, 239, 0);
+                border-color: var(--header-border);
+                background-color: var(--bg-secondary);
             }
+        }
+
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .pulse {
-            animation: pulseOutline 900ms ease-out 1;
-            border-color: var(--accent-primary) !important;
+            animation: pulseOutline 1200ms ease-out 1;
         }
+        /* Hide legacy single/multi buttons in favor of Sessions dropdown */
+        .choice-button-container { display: none !important; }
     </style>
 </head>
 
@@ -698,61 +814,61 @@
                     <div id="progress-fill"></div>
                 </div>
             </div>
+            <!-- Collapsed phases strip appears only while scrolled -->
+            <div id="collapsed-phases-strip" class="collapsed-phases-strip" aria-live="polite" aria-label="Collapsed phases"></div>
             <div class="search-tools" role="search">
                 <input id="search-steps" type="search" placeholder="Search steps, phases, tips..." aria-label="Search steps" />
                 <button id="clear-search" type="button" aria-label="Clear search">Clear</button>
-                <label for="compact-mode-toggle" style="display:inline-flex;align-items:center;gap:.5rem;background:var(--bg-tertiary);padding:8px 12px;border:1px solid var(--table-border);border-radius:999px;">
-                    <input id="compact-mode-toggle" type="checkbox" style="accent-color: var(--accent-primary);">
-                    Compact
-                </label>
             </div>
         </header>
 
-        <div class="project-manager-container">
-            <h3>Project Manager <button id="pm-collapse-btn" class="toggle-btn" type="button" aria-label="Toggle section">−</button></h3>
-            <label for="project-selector">Load Existing Project:</label>
-            <select id="project-selector">
-                <option value="">-- Select a Project --</option>
-            </select>
-            <label for="project-name">Or Create a New Project:</label>
-            <input type="text" id="project-name" placeholder="e.g., M31 - August Session">
-            <div class="project-manager-buttons">
-                <button id="newProjectButton">Clear for New Project</button>
-                <button id="deleteProjectButton">Delete Selected Project</button>
-            </div>
-            <div class="note" aria-live="polite" style="margin-top:1rem;">
-                Projects are saved only in this browser (localStorage). Use Export/Import below to back up or move projects to another device.
-            </div>
-            <div class="project-manager-buttons" style="margin-top: 0.75rem;">
-                <button id="exportSelectedProjectButton" title="Export only the selected/entered project">Export Selected</button>
-                <button id="exportAllProjectsButton" title="Export all saved projects">Export All</button>
-                <button id="importProjectsButton" title="Import projects from a JSON file">Import JSON</button>
-                <input id="importProjectsInput" type="file" accept="application/json" style="display:none" />
+        <div class="project-manager-container collapsed">
+            <h3>Project Manager <button id="pm-collapse-btn" class="toggle-btn" type="button" aria-label="Toggle section" aria-expanded="false">−</button></h3>
+            <div class="pm-content">
+                <label for="project-selector">Load Existing Project:</label>
+                <select id="project-selector">
+                    <option value="">-- Select a Project --</option>
+                </select>
+                <label for="project-name">Or Create a New Project:</label>
+                <input type="text" id="project-name" placeholder="e.g., M31 - August Session">
+                <div class="project-manager-buttons">
+                    <button id="newProjectButton">Clear for New Project</button>
+                    <button id="deleteProjectButton">Delete Selected Project</button>
+                </div>
+                <div class="note" aria-live="polite" style="margin-top:1rem;">
+                    Projects are saved only in this browser (localStorage). Use Export/Import below to back up or move projects to another device.
+                </div>
+                <div class="project-manager-buttons" style="margin-top: 0.75rem;">
+                    <button id="exportSelectedProjectButton" title="Export only the selected/entered project">Export Selected</button>
+                    <button id="exportAllProjectsButton" title="Export all saved projects">Export All</button>
+                    <button id="importProjectsButton" title="Import projects from a JSON file">Import JSON</button>
+                    <input id="importProjectsInput" type="file" accept="application/json" style="display:none" />
+                </div>
             </div>
         </div>
 
         <div class="target-selector-container">
             <div class="selectors-wrapper">
-                <div class="select-card">
-                    <label for="session-type-choice">Session Type</label>
+                <div>
+                    <label for="session-type-choice">Filter</label>
                     <select id="session-type-choice">
                         <option value="dual-band">Dual-Band (L-Extreme, etc.)</option>
                         <option value="broadband">Broadband OSC (Galaxies, etc.)</option>
                     </select>
                 </div>
-                <div class="select-card">
-                    <label for="target-type-choice">Target Type</label>
+                <div>
+                    <label for="target-type-choice">Recommendation for</label>
                     <select id="target-type-choice">
                         <option value="large-nebula">Large, Diffuse Nebula</option>
                         <option value="small-nebula">Small / High-Detail Nebula</option>
                         <option value="galaxy">Galaxy / Star Cluster</option>
                     </select>
                 </div>
-                <div class="select-card">
-                    <label for="night-type-choice">Night Mode</label>
+                <div>
+                    <label for="night-type-choice">Sessions</label>
                     <select id="night-type-choice">
-                        <option value="single">Single Night</option>
-                        <option value="multi">Multi-Night</option>
+                        <option value="single">Single night</option>
+                        <option value="multi">Multi night</option>
                     </select>
                 </div>
             </div>
@@ -763,71 +879,75 @@
                 <!-- DUAL BAND SINGLE NIGHT CONTENT -->
                 <div class="phase">
                     <h2>Phase 1: Calibration & Extraction</h2>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="db-s1-step1">
-                        <div class="item-content">
-                            <label for="db-s1-step1"><strong>Organize Files:</strong> Create a project folder with <span
-                                    class="highlight-term">lights</span>, <span class="highlight-term">darks</span>,
-                                <span class="highlight-term">flats</span>, and <span
-                                    class="highlight-term">biases</span> subfolders.</label>
+                    <div class="phase-content">
+                        <div class="checklist-item">
+                            <input type="checkbox" id="db-s1-step1">
+                            <div class="item-content">
+                                <label for="db-s1-step1"><strong>Organize Files:</strong> Create a project folder with <span
+                                        class="highlight-term">lights</span>, <span class="highlight-term">darks</span>,
+                                    <span class="highlight-term">flats</span>, and <span
+                                        class="highlight-term">biases</span> subfolders.</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="db-s1-step2">
-                        <div class="item-content">
-                            <label for="db-s1-step2"><strong>Run Extraction Script:</strong> In Siril, set the home
-                                directory to your project folder. Run the built-in script: <span
-                                    class="highlight-term">Scripts</span> -> <span
-                                    class="highlight-term">OSC_Extract_HaOIII</span>.</label>
-                            <div class="note">
-                                This script calibrates your files and separates the Ha and OIII signals, creating two
-                                new sequences in your `process` folder.
+                        <div class="checklist-item">
+                            <input type="checkbox" id="db-s1-step2">
+                            <div class="item-content">
+                                <label for="db-s1-step2"><strong>Run Extraction Script:</strong> In Siril, set the home
+                                    directory to your project folder. Run the built-in script: <span
+                                        class="highlight-term">Scripts</span> -> <span
+                                        class="highlight-term">OSC_Extract_HaOIII</span>.</label>
+                                <div class="note">
+                                    This script calibrates your files and separates the Ha and OIII signals, creating two
+                                    new sequences in your `process` folder.
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="phase">
                     <h2>Phase 2: Create Master Files</h2>
-                    <h3>2a: Process OIII Channel</h3>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="db-s1-step3">
-                        <div class="item-content">
-                            <label for="db-s1-step3"><strong>Cull OIII Frames:</strong> Load the <span
-                                    class="highlight-term">OIII_pp_lights</span> sequence and exclude any bad
-                                frames.</label>
+                    <div class="phase-content">
+                        <h3>2a: Process OIII Channel</h3>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="db-s1-step3">
+                            <div class="item-content">
+                                <label for="db-s1-step3"><strong>Cull OIII Frames:</strong> Load the <span
+                                        class="highlight-term">OIII_pp_lights</span> sequence and exclude any bad
+                                    frames.</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="db-s1-step4">
-                        <div class="item-content">
-                            <label for="db-s1-step4"><strong>Stack OIII:</strong> Register the culled OIII sequence,
-                                then stack the result to create <span
-                                    class="highlight-term">OIII_stacked.fit</span>.</label>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="db-s1-step4">
+                            <div class="item-content">
+                                <label for="db-s1-step4"><strong>Stack OIII:</strong> Register the culled OIII sequence,
+                                    then stack the result to create <span
+                                        class="highlight-term">OIII_stacked.fit</span>.</label>
+                            </div>
                         </div>
-                    </div>
-                    <h3>2b: Process Ha Channel</h3>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="db-s1-step5">
-                        <div class="item-content">
-                            <label for="db-s1-step5"><strong>Cull Ha Frames:</strong> Load the <span
-                                    class="highlight-term">Ha_pp_lights</span> sequence and exclude any bad
-                                frames.</label>
+                        <h3>2b: Process Ha Channel</h3>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="db-s1-step5">
+                            <div class="item-content">
+                                <label for="db-s1-step5"><strong>Cull Ha Frames:</strong> Load the <span
+                                        class="highlight-term">Ha_pp_lights</span> sequence and exclude any bad
+                                    frames.</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="db-s1-step6">
-                        <div class="item-content">
-                            <label for="db-s1-step6"><strong>Stack Ha with Drizzle:</strong> Load the culled <span
-                                    class="highlight-term">Ha_pp_lights</span> sequence. In the <span
-                                    class="highlight-term">Registration</span> tab, select <span
-                                    class="highlight-term">Drizzle</span>, set <strong>Scale</strong> to <span
-                                    class="highlight-term">2.0</span> and <strong>Drop shrink</strong> to <span
-                                    class="highlight-term">0.5</span>. Register, then stack to create <span
-                                    class="highlight-term">Ha_stacked.fit</span>.</label>
-                            <div class="note">
-                                <strong>Why Drizzle Ha?</strong> Drizzle is essential here to restore the resolution of
-                                the Ha channel. We don't drizzle OIII because it doesn't suffer the same resolution
-                                loss.
+                        <div class="checklist-item">
+                            <input type="checkbox" id="db-s1-step6">
+                            <div class="item-content">
+                                <label for="db-s1-step6"><strong>Stack Ha with Drizzle:</strong> Load the culled <span
+                                        class="highlight-term">Ha_pp_lights</span> sequence. In the <span
+                                        class="highlight-term">Registration</span> tab, select <span
+                                        class="highlight-term">Drizzle</span>, set <strong>Scale</strong> to <span
+                                        class="highlight-term">2.0</span> and <strong>Drop shrink</strong> to <span
+                                        class="highlight-term">0.5</span>. Register, then stack to create <span
+                                        class="highlight-term">Ha_stacked.fit</span>.</label>
+                                <div class="note">
+                                    <strong>Why Drizzle Ha?</strong> Drizzle is essential here to restore the resolution of
+                                    the Ha channel. We don't drizzle OIII because it doesn't suffer the same resolution
+                                    loss.
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1293,9 +1413,11 @@
 
         // Elements
         const body = document.body;
+        const headerEl = document.querySelector('header');
+        const collapsedStrip = document.getElementById('collapsed-phases-strip');
         const pmContainer = document.querySelector('.project-manager-container');
         const pmBtn = document.getElementById('pm-collapse-btn');
-        const compactToggle = document.getElementById('compact-mode-toggle');
+        const pmContent = pmContainer ? pmContainer.querySelector('.pm-content') : null;
         const sessionSel = document.getElementById('session-type-choice');
         const nightSel = document.getElementById('night-type-choice');
         const dualBand = document.getElementById('dual-band-workflow');
@@ -1308,11 +1430,48 @@
         const progressFillEl = document.getElementById('progress-fill');
         const progressTrackEl = document.querySelector('.progress-track');
 
+        // Helpers
+        const isVisible = (el) => !!el && el.offsetParent !== null;
+
+        // Update headings based on session/night selection
+        function updatePhaseHeadings() {
+          const isBroad = sessionSel && sessionSel.value === 'broadband';
+          const night = nightSel ? nightSel.value : 'single';
+          document.querySelectorAll('h2[data-phase-single], h2[data-phase-multi], h2[data-phase-broadband]').forEach(h2 => {
+            const ds = h2.dataset;
+            let text = '';
+            if (isBroad && ds.phaseBroadband) {
+              text = ds.phaseBroadband;
+            } else if (night === 'multi' && ds.phaseMulti) {
+              text = ds.phaseMulti;
+            } else if (ds.phaseSingle) {
+              text = ds.phaseSingle;
+            }
+            if (text) {
+              const toggle = h2.querySelector('.toggle-btn');
+              h2.textContent = text;
+              if (toggle) h2.appendChild(toggle);
+            }
+          });
+        }
+
         // Collapsible phases with toggle buttons
         function initCollapsibles() {
           document.querySelectorAll('.phase').forEach(phase => {
             const h2 = phase.querySelector('h2');
             if (!h2) return;
+            
+            // Wrap content in phase-content div if not already wrapped
+            const existingContent = phase.querySelector('.phase-content');
+            if (!existingContent) {
+              const content = document.createElement('div');
+              content.className = 'phase-content';
+              Array.from(phase.children).forEach(child => {
+                if (child !== h2) content.appendChild(child);
+              });
+              phase.appendChild(content);
+            }
+            
             if (!h2.querySelector('.toggle-btn')) {
               const btn = document.createElement('button');
               btn.className = 'toggle-btn';
@@ -1324,6 +1483,7 @@
                 const collapsed = phase.classList.toggle('collapsed');
                 btn.textContent = collapsed ? '+' : '−';
                 updateProgress();
+                updateCollapsedPhasesStrip();
               });
             }
           });
@@ -1340,35 +1500,57 @@
           }
         }
 
-        // Project Manager collapse toggle + persistence
+        // Project Manager collapse toggle + persistence + animation
         if (pmBtn && pmContainer) {
           pmBtn.addEventListener('click', () => {
-            pmContainer.classList.toggle('collapsed');
-            pmBtn.textContent = pmContainer.classList.contains('collapsed') ? '+' : '−';
-            savePrefs({ pmCollapsed: pmContainer.classList.contains('collapsed') });
+            const isNowCollapsed = !pmContainer.classList.contains('collapsed');
+            // Animate height
+            if (pmContent) {
+              if (!isNowCollapsed) {
+                // Expanding
+                pmContainer.classList.remove('collapsed');
+                pmContent.style.maxHeight = pmContent.scrollHeight + 'px';
+                pmContent.style.opacity = '1';
+                pmContent.addEventListener('transitionend', function tidy(e){
+                  if (e.propertyName === 'max-height') {
+                    pmContent.style.maxHeight = '1200px';
+                    pmContent.removeEventListener('transitionend', tidy);
+                  }
+                });
+              } else {
+                // Collapsing
+                pmContent.style.maxHeight = pmContent.scrollHeight + 'px';
+                // Force reflow
+                void pmContent.offsetHeight;
+                pmContainer.classList.add('collapsed');
+              }
+            } else {
+              pmContainer.classList.toggle('collapsed');
+            }
+            const isCollapsed = pmContainer.classList.contains('collapsed');
+            pmBtn.textContent = isCollapsed ? '+' : '−';
+            pmBtn.setAttribute('aria-expanded', String(!isCollapsed));
+            savePrefs({ pmCollapsed: isCollapsed });
           });
         }
 
         // Restore UI prefs
         const prefs = loadPrefs();
-        if (prefs.compact) {
-          body.classList.add('compact');
-          if (compactToggle) compactToggle.checked = true;
-        }
         if (typeof prefs.pmCollapsed === 'boolean' && pmContainer) {
           pmContainer.classList.toggle('collapsed', prefs.pmCollapsed);
-          if (pmBtn) pmBtn.textContent = pmContainer.classList.contains('collapsed') ? '+' : '−';
+          if (pmBtn) {
+            const isCollapsed = pmContainer.classList.contains('collapsed');
+            pmBtn.textContent = isCollapsed ? '+' : '−';
+            pmBtn.setAttribute('aria-expanded', String(!isCollapsed));
+          }
+        } else if (pmContainer && pmBtn) {
+          // Default to collapsed on first load
+          pmContainer.classList.add('collapsed');
+          pmBtn.textContent = '+';
+          pmBtn.setAttribute('aria-expanded', 'false');
         }
         if (prefs.sessionType && sessionSel) sessionSel.value = prefs.sessionType;
         if (prefs.nightType && nightSel) nightSel.value = prefs.nightType;
-
-        // Compact mode persistence
-        if (compactToggle) {
-          compactToggle.addEventListener('change', () => {
-            body.classList.toggle('compact', compactToggle.checked);
-            savePrefs({ compact: compactToggle.checked });
-          });
-        }
 
         // Session & Night selectors wiring
         function applyNight() {
@@ -1382,7 +1564,9 @@
             if (mnDb) mnDb.style.display = n === 'multi' ? 'block' : 'none';
           }
           savePrefs({ nightType: n });
+          updatePhaseHeadings();
           updateProgress();
+          updateCollapsedPhasesStrip();
         }
 
         function applySession() {
@@ -1390,6 +1574,7 @@
           if (dualBand) dualBand.style.display = isBroad ? 'none' : 'block';
           if (broadband) broadband.style.display = isBroad ? 'block' : 'none';
           savePrefs({ sessionType: sessionSel ? sessionSel.value : 'dual-band' });
+          updatePhaseHeadings();
           applyNight();
         }
 
@@ -1412,11 +1597,635 @@
         }
         document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', updateProgress));
 
-        // Init
+        // Build/update collapsed phases strip
+        function updateCollapsedPhasesStrip() {
+          if (!collapsedStrip) return;
+          // Only show when header is compact
+          const compact = headerEl && headerEl.classList.contains('compact-scrolled');
+          collapsedStrip.innerHTML = '';
+          if (!compact) return;
+          const phases = Array.from(document.querySelectorAll('.phase'))
+            .filter(ph => ph.classList.contains('collapsed') && isVisible(ph));
+          phases.forEach(ph => {
+            const h2 = ph.querySelector('h2');
+            if (!h2) return;
+            const clone = h2.cloneNode(true);
+            clone.querySelectorAll('button').forEach(b => b.remove());
+            const title = (clone.textContent || '').trim();
+            // Optional per-phase progress
+            const cbs = Array.from(ph.querySelectorAll('input[type="checkbox"]')).filter(cb => isVisible(cb));
+            const total = cbs.length;
+            const checked = cbs.filter(cb => cb.checked).length;
+            const chip = document.createElement('button');
+            chip.className = 'phase-chip';
+            chip.type = 'button';
+            chip.title = 'Jump to and expand: ' + title;
+            chip.innerHTML = `${title}${total ? `<span class="count">(${checked}/${total})</span>` : ''}`;
+            chip.addEventListener('click', () => {
+              // Expand this phase and scroll to it
+              ph.classList.remove('collapsed');
+              const btn = ph.querySelector('.toggle-btn');
+              if (btn) btn.textContent = '−';
+              ph.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              updateProgress();
+              updateCollapsedPhasesStrip();
+            });
+            collapsedStrip.appendChild(chip);
+          });
+        }
+
+        // Sticky header: hide title/intro when scrolling
+        let lastCompact = false;
+        const onScroll = () => {
+          const compact = window.scrollY > 36;
+          if (headerEl && compact !== lastCompact) {
+            headerEl.classList.toggle('compact-scrolled', compact);
+            lastCompact = compact;
+            updateCollapsedPhasesStrip();
+          }
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        // FAB Next Step Button
+        const fabBtn = document.getElementById('next-step-fab');
+        if (fabBtn) {
+          fabBtn.addEventListener('click', () => {
+            const visible = getVisibleCheckboxes();
+            const nextUnchecked = visible.find(cb => !cb.checked);
+            if (nextUnchecked) {
+              // Expand parent phase if collapsed
+              const phase = nextUnchecked.closest('.phase');
+              if (phase && phase.classList.contains('collapsed')) {
+                phase.classList.remove('collapsed');
+                const btn = phase.querySelector('.toggle-btn');
+                if (btn) btn.textContent = '−';
+              }
+              
+              // Scroll to and highlight the step
+              nextUnchecked.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              const item = nextUnchecked.closest('.checklist-item');
+              if (item) {
+                item.classList.add('pulse');
+                setTimeout(() => item.classList.remove('pulse'), 900);
+              }
+              updateProgress();
+              updateCollapsedPhasesStrip();
+            }
+          });
+
+          // Update FAB button state based on progress
+          function updateFabState() {
+            const visible = getVisibleCheckboxes();
+            const hasUnchecked = visible.some(cb => !cb.checked);
+            fabBtn.disabled = !hasUnchecked;
+          }
+          
+          document.querySelectorAll('input[type="checkbox"]').forEach(cb => 
+            cb.addEventListener('change', updateFabState)
+          );
+          updateFabState();
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('search-steps');
+        const clearBtn = document.getElementById('clear-search');
+        let searchState = { expanded: new Set(), query: '' };
+
+        function highlightText(text, query) {
+          if (!query) return text;
+          const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+          return text.replace(regex, '<mark class="search-mark">$1</mark>');
+        }
+
+        function performSearch(query) {
+          const phases = document.querySelectorAll('.phase');
+          let hasResults = false;
+
+          phases.forEach(phase => {
+            let phaseHasMatch = false;
+            const items = phase.querySelectorAll('.checklist-item, .note, h3, p');
+            
+            items.forEach(item => {
+              const text = item.textContent.toLowerCase();
+              const matches = !query || text.includes(query.toLowerCase());
+              
+              if (matches && query) {
+                // Highlight matches
+                const walker = document.createTreeWalker(
+                  item, NodeFilter.SHOW_TEXT, null, false
+                );
+                const textNodes = [];
+                let node;
+                while (node = walker.nextNode()) {
+                  textNodes.push(node);
+                }
+                
+                textNodes.forEach(textNode => {
+                  if (textNode.textContent.toLowerCase().includes(query.toLowerCase())) {
+                    const span = document.createElement('span');
+                    span.innerHTML = highlightText(textNode.textContent, query);
+                    textNode.parentNode.replaceChild(span, textNode);
+                  }
+                });
+                
+                phaseHasMatch = true;
+                hasResults = true;
+              }
+              
+              item.style.display = matches ? '' : 'none';
+            });
+
+            // Show/hide entire phase based on matches
+            if (query) {
+              phase.style.display = phaseHasMatch ? '' : 'none';
+              if (phaseHasMatch && phase.classList.contains('collapsed')) {
+                searchState.expanded.add(phase.id || phases.indexOf(phase));
+                phase.classList.remove('collapsed');
+                const btn = phase.querySelector('.toggle-btn');
+                if (btn) btn.textContent = '−';
+              }
+            } else {
+              phase.style.display = '';
+              // Restore previous collapse state
+              const id = phase.id || phases.indexOf(phase);
+              if (searchState.expanded.has(id)) {
+                searchState.expanded.delete(id);
+                phase.classList.add('collapsed');
+                const btn = phase.querySelector('.toggle-btn');
+                if (btn) btn.textContent = '+';
+              }
+            }
+          });
+
+          updateProgress();
+          updateCollapsedPhasesStrip();
+        }
+
+        function clearSearch() {
+          // Remove all search highlights
+          document.querySelectorAll('.search-mark').forEach(mark => {
+            const parent = mark.parentNode;
+            parent.replaceChild(document.createTextNode(mark.textContent), mark);
+            parent.normalize();
+          });
+          
+          // Remove any wrapper spans
+          document.querySelectorAll('span').forEach(span => {
+            if (!span.className && span.children.length === 0) {
+              const parent = span.parentNode;
+              parent.replaceChild(document.createTextNode(span.textContent), span);
+              parent.normalize();
+            }
+          });
+
+          performSearch('');
+          searchInput.value = '';
+          searchState.query = '';
+        }
+
+        if (searchInput && clearBtn) {
+          searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            searchState.query = query;
+            clearSearch();
+            if (query) performSearch(query);
+          });
+
+          clearBtn.addEventListener('click', clearSearch);
+        }
+
+        // Palette Selection System
+        const paletteData = {
+          hoo_standard: {
+            name: "Standard HOO (Gold & Cyan)",
+            description: "Classic Ha-OIII combination with warm and cool tones",
+            formulas: {
+              R: "Ha*0.8 + OIII*0.2",
+              G: "Ha*0.1 + OIII*0.9", 
+              B: "OIII*1.0"
+            }
+          },
+          hoo_custom: {
+            name: "Custom HOO (Orange & Teal)",
+            description: "Modern cinematic look with orange nebula and teal stars",
+            formulas: {
+              R: "Ha*1.0",
+              G: "Ha*0.4 + OIII*0.6",
+              B: "OIII*0.8"
+            }
+          },
+          dynamic_blend: {
+            name: "Dynamic Blend (Red & Blue)",
+            description: "High contrast blend emphasizing structure",
+            formulas: {
+              R: "Ha*1.0 + OIII*0.1",
+              G: "Ha*0.3 + OIII*0.4",
+              B: "OIII*1.0 + Ha*0.1"
+            }
+          },
+          sho_hubble: {
+            name: "SHO (Hubble Palette)",
+            description: "Space telescope inspired false-color mapping",
+            formulas: {
+              R: "OIII*1.0",
+              G: "Ha*1.0", 
+              B: "OIII*0.7 + Ha*0.3"
+            }
+          },
+          hso_custom: {
+            name: "HSO Palette",
+            description: "Alternative mapping for unique aesthetic",
+            formulas: {
+              R: "Ha*0.9 + OIII*0.1",
+              G: "OIII*0.6 + Ha*0.4",
+              B: "OIII*1.0"
+            }
+          }
+        };
+
+        function renderPaletteInfo(paletteKey) {
+          const container = document.getElementById('palette-info-container');
+          if (!container) return;
+
+          const palette = paletteData[paletteKey];
+          if (!palette) {
+            container.innerHTML = '';
+            return;
+          }
+
+          container.innerHTML = `
+            <div class="palette-info">
+              <h4>${palette.name}</h4>
+              <p>${palette.description}</p>
+              <div class="palette-actions">
+                <button class="btn-secondary copy-formulas" data-formulas='${JSON.stringify(palette.formulas)}'>
+                  Copy Formulas
+                </button>
+              </div>
+              <pre>R: ${palette.formulas.R}
+G: ${palette.formulas.G}  
+B: ${palette.formulas.B}</pre>
+            </div>
+          `;
+
+          // Add copy functionality
+          const copyBtn = container.querySelector('.copy-formulas');
+          if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+              const formulas = JSON.parse(copyBtn.dataset.formulas);
+              const text = `R: ${formulas.R}\nG: ${formulas.G}\nB: ${formulas.B}`;
+              navigator.clipboard.writeText(text).then(() => {
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => copyBtn.textContent = 'Copy Formulas', 2000);
+              });
+            });
+          }
+        }
+
+        const paletteSelector = document.getElementById('palette-choice');
+        if (paletteSelector) {
+          paletteSelector.addEventListener('change', (e) => {
+            renderPaletteInfo(e.target.value);
+          });
+          // Render initial selection
+          renderPaletteInfo(paletteSelector.value);
+        }
+
+        // Reset Button
+        const resetBtn = document.getElementById('resetButton');
+        if (resetBtn) {
+          resetBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all checkboxes? This will clear your current progress.')) {
+              document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+              });
+              updateProgress();
+              updateFabState();
+            }
+          });
+        }
+
+        // Project Management Implementation
+        const PROJECTS_KEY = 'akhilAstroProjects';
+        const CURRENT_PROJECT_KEY = 'akhilAstroCurrentProject';
+
+        // Project management functions
+        function getAllProjects() {
+          try {
+            return JSON.parse(localStorage.getItem(PROJECTS_KEY)) || {};
+          } catch {
+            return {};
+          }
+        }
+
+        function saveProject(projectName, data) {
+          const projects = getAllProjects();
+          projects[projectName] = {
+            projectName,
+            timestamp: new Date().toISOString(),
+            checkboxStates: data.checkboxStates || {},
+            uiPreferences: data.uiPreferences || {}
+          };
+          localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+          localStorage.setItem(CURRENT_PROJECT_KEY, projectName);
+          populateProjectSelector();
+        }
+
+        function loadProject(projectName) {
+          const projects = getAllProjects();
+          const project = projects[projectName];
+          if (!project) return false;
+
+          // Restore checkbox states
+          if (project.checkboxStates) {
+            Object.entries(project.checkboxStates).forEach(([id, checked]) => {
+              const checkbox = document.getElementById(id);
+              if (checkbox) checkbox.checked = checked;
+            });
+          }
+
+          // Restore UI preferences
+          if (project.uiPreferences) {
+            if (project.uiPreferences.sessionType && sessionSel) {
+              sessionSel.value = project.uiPreferences.sessionType;
+            }
+            if (project.uiPreferences.targetType) {
+              const targetSel = document.getElementById('target-type-choice');
+              if (targetSel) targetSel.value = project.uiPreferences.targetType;
+            }
+            if (project.uiPreferences.nightType && nightSel) {
+              nightSel.value = project.uiPreferences.nightType;
+            }
+          }
+
+          localStorage.setItem(CURRENT_PROJECT_KEY, projectName);
+          updateProgress();
+          applySession();
+          return true;
+        }
+
+        function deleteProject(projectName) {
+          const projects = getAllProjects();
+          delete projects[projectName];
+          localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+          
+          const currentProject = localStorage.getItem(CURRENT_PROJECT_KEY);
+          if (currentProject === projectName) {
+            localStorage.removeItem(CURRENT_PROJECT_KEY);
+          }
+          
+          populateProjectSelector();
+        }
+
+        function getCurrentProjectData() {
+          const checkboxStates = {};
+          document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            checkboxStates[cb.id] = cb.checked;
+          });
+
+          const uiPreferences = {
+            sessionType: sessionSel ? sessionSel.value : 'dual-band',
+            targetType: document.getElementById('target-type-choice')?.value || 'large-nebula',
+            nightType: nightSel ? nightSel.value : 'single'
+          };
+
+          return { checkboxStates, uiPreferences };
+        }
+
+        function populateProjectSelector() {
+          const selector = document.getElementById('project-selector');
+          if (!selector) return;
+
+          const projects = getAllProjects();
+          const currentProject = localStorage.getItem(CURRENT_PROJECT_KEY);
+          
+          selector.innerHTML = '<option value="">-- Select a Project --</option>';
+          
+          Object.keys(projects).sort().forEach(projectName => {
+            const option = document.createElement('option');
+            option.value = projectName;
+            option.textContent = projectName;
+            if (projectName === currentProject) {
+              option.selected = true;
+            }
+            selector.appendChild(option);
+          });
+        }
+
+        function exportProject(projectName) {
+          const projects = getAllProjects();
+          const project = projects[projectName];
+          if (!project) return;
+
+          const dataStr = JSON.stringify([project], null, 2);
+          const dataBlob = new Blob([dataStr], { type: 'application/json' });
+          const url = URL.createObjectURL(dataBlob);
+          
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `astrophotography-project-${projectName.replace(/[^a-z0-9]/gi, '_')}.json`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }
+
+        function exportAllProjects() {
+          const projects = getAllProjects();
+          const projectsArray = Object.values(projects);
+          
+          if (projectsArray.length === 0) {
+            alert('No projects to export.');
+            return;
+          }
+
+          const dataStr = JSON.stringify(projectsArray, null, 2);
+          const dataBlob = new Blob([dataStr], { type: 'application/json' });
+          const url = URL.createObjectURL(dataBlob);
+          
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'astrophotography-projects-all.json';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }
+
+        function importProjects(file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            try {
+              const importedData = JSON.parse(e.target.result);
+              const projects = getAllProjects();
+              
+              let importedCount = 0;
+              const dataArray = Array.isArray(importedData) ? importedData : [importedData];
+              
+              dataArray.forEach(project => {
+                if (project.projectName) {
+                  projects[project.projectName] = project;
+                  importedCount++;
+                }
+              });
+              
+              localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+              populateProjectSelector();
+              alert(`Successfully imported ${importedCount} project(s).`);
+            } catch (error) {
+              alert('Error importing projects. Please check the file format.');
+              console.error('Import error:', error);
+            }
+          };
+          reader.readAsText(file);
+        }
+
+        // Auto-save current project data
+        function autoSaveCurrentProject() {
+          const currentProject = localStorage.getItem(CURRENT_PROJECT_KEY);
+          const projectName = document.getElementById('project-name')?.value?.trim();
+          
+          if (currentProject || projectName) {
+            const nameToUse = projectName || currentProject;
+            const data = getCurrentProjectData();
+            saveProject(nameToUse, data);
+          }
+        }
+
+        // Project management event listeners
+        const projectSelector = document.getElementById('project-selector');
+        const projectNameInput = document.getElementById('project-name');
+        const newProjectBtn = document.getElementById('newProjectButton');
+        const deleteProjectBtn = document.getElementById('deleteProjectButton');
+        const exportSelectedBtn = document.getElementById('exportSelectedProjectButton');
+        const exportAllBtn = document.getElementById('exportAllProjectsButton');
+        const importBtn = document.getElementById('importProjectsButton');
+        const importInput = document.getElementById('importProjectsInput');
+
+        if (projectSelector) {
+          projectSelector.addEventListener('change', (e) => {
+            const projectName = e.target.value;
+            if (projectName) {
+              loadProject(projectName);
+              if (projectNameInput) projectNameInput.value = projectName;
+            }
+          });
+        }
+
+        if (projectNameInput) {
+          projectNameInput.addEventListener('input', () => {
+            // Clear selector when typing new name
+            if (projectSelector) projectSelector.value = '';
+          });
+        }
+
+        if (newProjectBtn) {
+          newProjectBtn.addEventListener('click', () => {
+            const projectName = projectNameInput?.value?.trim();
+            if (!projectName) {
+              alert('Please enter a project name first.');
+              return;
+            }
+            
+            // Clear all checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+              cb.checked = false;
+            });
+            
+            // Save the new empty project
+            const data = getCurrentProjectData();
+            saveProject(projectName, data);
+            
+            updateProgress();
+            alert(`New project "${projectName}" created and ready.`);
+          });
+        }
+
+        if (deleteProjectBtn) {
+          deleteProjectBtn.addEventListener('click', () => {
+            const selectedProject = projectSelector?.value;
+            if (!selectedProject) {
+              alert('Please select a project to delete.');
+              return;
+            }
+            
+            if (confirm(`Are you sure you want to delete the project "${selectedProject}"? This cannot be undone.`)) {
+              deleteProject(selectedProject);
+              if (projectNameInput) projectNameInput.value = '';
+              alert(`Project "${selectedProject}" has been deleted.`);
+            }
+          });
+        }
+
+        if (exportSelectedBtn) {
+          exportSelectedBtn.addEventListener('click', () => {
+            const projectName = projectNameInput?.value?.trim() || projectSelector?.value;
+            if (!projectName) {
+              alert('Please select or enter a project name to export.');
+              return;
+            }
+            
+            // Save current state first
+            const data = getCurrentProjectData();
+            saveProject(projectName, data);
+            
+            exportProject(projectName);
+          });
+        }
+
+        if (exportAllBtn) {
+          exportAllBtn.addEventListener('click', exportAllProjects);
+        }
+
+        if (importBtn) {
+          importBtn.addEventListener('click', () => {
+            importInput?.click();
+          });
+        }
+
+        if (importInput) {
+          importInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              importProjects(file);
+              e.target.value = ''; // Clear the input
+            }
+          });
+        }
+
+        // Auto-save on checkbox changes
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          cb.addEventListener('change', () => {
+            setTimeout(autoSaveCurrentProject, 100); // Slight delay to batch changes
+          });
+        });
+
+        // Auto-save on UI preference changes
+        if (sessionSel) sessionSel.addEventListener('change', autoSaveCurrentProject);
+        if (nightSel) nightSel.addEventListener('change', autoSaveCurrentProject);
+        const targetSel = document.getElementById('target-type-choice');
+        if (targetSel) targetSel.addEventListener('change', autoSaveCurrentProject);
+
+        // Initialize project management
+        populateProjectSelector();
+        
+        // Try to restore last project if no specific project is loaded
+        const currentProject = localStorage.getItem(CURRENT_PROJECT_KEY);
+        if (currentProject && projectNameInput) {
+          projectNameInput.value = currentProject;
+          if (projectSelector) projectSelector.value = currentProject;
+        }
+
+        // Initialize everything
         initCollapsibles();
         collapseAppendixByDefault();
         applySession();
+        if (nightSel && !nightSel.value) nightSel.value = 'single';
+        updatePhaseHeadings();
         updateProgress();
+        updateCollapsedPhasesStrip();
+        onScroll();
+        if (typeof updateFabState === 'function') updateFabState();
       });
     </script>
 
