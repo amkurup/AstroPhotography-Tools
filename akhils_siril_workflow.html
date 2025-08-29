@@ -90,10 +90,12 @@
 
         /* Header compact-on-scroll state */
         header.compact-scrolled {
-            padding-bottom: 0.75rem;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            min-height: 28px;
         }
         
-        header .search-tools { 
+        header.compact-scrolled .search-tools { 
             transition: opacity 180ms ease, max-height 180ms ease, margin 180ms ease; 
         }
         
@@ -267,37 +269,6 @@
             margin-top: 2.5rem;
         }
 
-        .choice-button-container {
-            display: none !important;
-        }
-
-        .choice-button {
-            flex: 1;
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: 1px solid var(--table-border);
-            padding: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .choice-button:hover {
-            background-color: var(--accent-primary);
-            color: white;
-            border-color: var(--accent-primary);
-        }
-
-        .choice-button.active {
-            background-color: var(--accent-primary);
-            color: white;
-            border-color: var(--accent-primary);
-        }
-
-        /* Old resetButton style - will be overridden by modern style below */
-
         .palette-selector {
             background: var(--bg-secondary);
             border: 1px solid var(--header-border);
@@ -372,22 +343,7 @@
             gap: .5rem;
         }
 
-        .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: 1px solid var(--header-border);
-            padding: 8px 16px;
-            font-size: .95rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 180ms ease;
-        }
-
-        .btn-secondary:hover {
-            background: var(--accent-primary);
-            color: white;
-            border-color: var(--accent-primary);
-        }
+        
 
         .target-selector-container,
         .project-manager-container {
@@ -410,23 +366,7 @@
             }
         }
 
-        .select-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--header-border);
-            border-radius: 8px;
-            padding: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: border-color .15s ease;
-        }
-
-        .select-card:hover {
-            border-color: var(--accent-primary);
-        }
-
-        .select-card label {
-            margin-bottom: .5rem;
-            display: block;
-        }
+        /* Removed unused .select-card styles */
 
         .project-manager-container label,
         .target-selector-container label {
@@ -529,23 +469,7 @@
             box-shadow: 0 4px 15px rgba(97, 175, 239, 0.25);
         }
 
-        .search-tools button {
-            padding: 10px 16px;
-            border-radius: 20px;
-            border: none;
-            background: linear-gradient(135deg, var(--bg-tertiary), #495066);
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 180ms ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .search-tools button:hover {
-            background: linear-gradient(135deg, var(--accent-primary), #4a9eff);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(97, 175, 239, 0.25);
-        }
+        
         .progress {
             margin-top: 1.25rem;
         }
@@ -739,6 +663,20 @@
             border-radius: 3px;
         }
 
+        /* Skipped steps + numbering */
+        .checklist-item.skipped { opacity: 0.5; }
+        .checklist-item .step-index { font-weight: 700; margin-right: .35rem; color: var(--text-secondary); }
+        .checklist-item .skip-btn {
+            margin-left: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px dashed var(--header-border);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .checklist-item .skip-btn.active { color: var(--danger-color); border-color: var(--danger-color); }
+
         .fab-next {
             position: fixed;
             right: 24px;
@@ -792,6 +730,41 @@
         }
         /* Hide legacy single/multi buttons in favor of Sessions dropdown */
         .choice-button-container { display: none !important; }
+
+        header.compact-scrolled h1,
+        header.compact-scrolled p {
+            opacity: 0;
+            max-height: 0;
+            margin: 0;
+            transform: translateY(-6px);
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        header.compact-scrolled .progress {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 0 1rem;
+        }
+        header.compact-scrolled .progress-track { height: 6px; }
+        header.compact-scrolled .collapsed-phases-strip { margin-top: 0.25rem; }
+
+        /* Ensure full header content shows when not compact */
+        header:not(.compact-scrolled) h1,
+        header:not(.compact-scrolled) p {
+            opacity: 1;
+            max-height: 200px;
+            transform: none;
+            margin: initial;
+            pointer-events: auto;
+        }
+
+        /* Checklist layout tweaks for skip button below checkbox */
+        .checklist-item { align-items: flex-start; }
+        .checklist-item .control-col { display: flex; flex-direction: column; align-items: center; margin-right: 16px; }
+        .checklist-item .control-col .skip-btn { margin: 6px 0 0 0; }
     </style>
 </head>
 
@@ -1028,6 +1001,12 @@
                         </div>
                     </div>
                     <div class="checklist-item">
+                        <input type="checkbox" id="db-c-step2b">
+                        <div class="item-content">
+                            <label for="db-c-step2b"><strong>Optional: Software Bin 2x2:</strong> If undersampled or for smoother noise, use <span class="highlight-term">Resample</span> and set scale to <strong>0.5</strong> for X and Y. Save as new images.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
                         <input type="checkbox" id="db-c-step3">
                         <div class="item-content">
                             <label for="db-c-step3"><strong>Background Extraction:</strong> Run <span
@@ -1189,6 +1168,12 @@
                         <div class="item-content">
                             <label for="bb-c-step5"><strong>Final Crop:</strong> Open your final stacked color image and
                                 crop out any remaining stacking artifacts.</label>
+                        </div>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="bb-c-step5b">
+                        <div class="item-content">
+                            <label for="bb-c-step5b"><strong>Optional: Software Bin 2x2:</strong> If needed, use <span class="highlight-term">Resample</span> and set scale to <strong>0.5</strong> for X and Y to bin 2x2. Save as a new image.</label>
                         </div>
                     </div>
                     <div class="checklist-item">
@@ -1426,8 +1411,17 @@
         const progressFillEl = document.getElementById('progress-fill');
         const progressTrackEl = document.querySelector('.progress-track');
 
-        // Helpers
-        const isVisible = (el) => !!el && el.offsetParent !== null;
+        // Utilities
+        function debounce(fn, delay) {
+          let t;
+          return function(...args) {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(this, args), delay);
+          };
+        }
+
+        // Hoisted FAB state updater (reassigned when FAB initializes)
+        let updateFabState = () => {};
 
         // Update headings based on session/night selection
         function updatePhaseHeadings() {
@@ -1561,8 +1555,10 @@
           }
           savePrefs({ nightType: n });
           updatePhaseHeadings();
+          enhanceSteps();
           updateProgress();
           updateCollapsedPhasesStrip();
+          if (typeof updateFabState === 'function') updateFabState();
         }
 
         function applySession() {
@@ -1572,6 +1568,8 @@
           savePrefs({ sessionType: sessionSel ? sessionSel.value : 'dual-band' });
           updatePhaseHeadings();
           applyNight();
+          enhanceSteps();
+          if (typeof updateFabState === 'function') updateFabState();
         }
 
         if (sessionSel) sessionSel.addEventListener('change', applySession);
@@ -1585,13 +1583,79 @@
           if (!progressCountEl || !progressFillEl || !progressTrackEl) return;
           const visible = getVisibleCheckboxes();
           const total = visible.length;
-          const checked = visible.filter(cb => cb.checked).length;
-          const pct = total ? Math.round((checked / total) * 100) : 0;
-          progressCountEl.textContent = `${checked}/${total}`;
+          const checked = visible.filter(cb => cb.checked && !cb.closest('.checklist-item')?.classList.contains('skipped')).length;
+          const skippedVisible = visible.filter(cb => cb.closest('.checklist-item')?.classList.contains('skipped')).length;
+          const effectiveTotal = total; // Show total visible steps (checked + unchecked + skipped)
+          const pct = effectiveTotal ? Math.round((checked / effectiveTotal) * 100) : 0;
+          progressCountEl.textContent = `${checked}/${effectiveTotal}`;
           progressFillEl.style.width = pct + '%';
           progressTrackEl.setAttribute('aria-valuenow', String(pct));
         }
         document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', updateProgress));
+
+        // Step numbering + Skip feature
+        function enhanceSteps() {
+          const allItems = Array.from(document.querySelectorAll('.checklist-item'));
+          let idx = 1;
+          allItems.forEach(item => {
+            // Numbering
+            if (!item.querySelector('.step-index')) {
+              const indexSpan = document.createElement('span');
+              indexSpan.className = 'step-index';
+              indexSpan.textContent = idx + '.';
+              const content = item.querySelector('.item-content');
+              if (content && content.firstChild) {
+                content.insertBefore(indexSpan, content.firstChild);
+              } else if (content) {
+                content.appendChild(indexSpan);
+              }
+            } else {
+              item.querySelector('.step-index').textContent = idx + '.';
+            }
+
+            // Create/ensure control column
+            let controlCol = item.querySelector('.control-col');
+            if (!controlCol) {
+              controlCol = document.createElement('div');
+              controlCol.className = 'control-col';
+              // Move existing checkbox into control column
+              const cb = item.querySelector('input[type="checkbox"]');
+              if (cb) {
+                item.insertBefore(controlCol, cb);
+                controlCol.appendChild(cb);
+              } else {
+                item.insertBefore(controlCol, item.firstChild);
+              }
+            } else {
+              // ensure checkbox is first in control column
+              const cb = item.querySelector('input[type="checkbox"]');
+              if (cb && cb.parentElement !== controlCol) {
+                controlCol.insertBefore(cb, controlCol.firstChild);
+              }
+            }
+
+            // Skip control under checkbox
+            let skipBtn = item.querySelector('.skip-btn');
+            if (!skipBtn) {
+              skipBtn = document.createElement('button');
+              skipBtn.type = 'button';
+              skipBtn.className = 'skip-btn';
+              skipBtn.textContent = 'Skip';
+              skipBtn.addEventListener('click', () => {
+                const isSkipped = item.classList.toggle('skipped');
+                skipBtn.classList.toggle('active', isSkipped);
+                skipBtn.textContent = isSkipped ? 'Unskip' : 'Skip';
+                updateProgress();
+                if (typeof updateFabState === 'function') updateFabState();
+              });
+              controlCol.appendChild(skipBtn);
+            } else if (skipBtn.parentElement !== controlCol) {
+              controlCol.appendChild(skipBtn);
+            }
+
+            idx += 1;
+          });
+        }
 
         // Build/update collapsed phases strip
         function updateCollapsedPhasesStrip() {
@@ -1630,15 +1694,21 @@
           });
         }
 
-        // Sticky header: hide title/intro when scrolling
+        // Sticky header: hide title/intro when scrolling (throttled with rAF)
         let lastCompact = false;
+        let scrollScheduled = false;
         const onScroll = () => {
-          const compact = window.scrollY > 36;
-          if (headerEl && compact !== lastCompact) {
-            headerEl.classList.toggle('compact-scrolled', compact);
-            lastCompact = compact;
-            updateCollapsedPhasesStrip();
-          }
+          if (scrollScheduled) return;
+          scrollScheduled = true;
+          requestAnimationFrame(() => {
+            const compact = window.scrollY > 36;
+            if (headerEl && compact !== lastCompact) {
+              headerEl.classList.toggle('compact-scrolled', compact);
+              lastCompact = compact;
+              updateCollapsedPhasesStrip();
+            }
+            scrollScheduled = false;
+          });
         };
         window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -1670,11 +1740,11 @@
           });
 
           // Update FAB button state based on progress
-          function updateFabState() {
+          updateFabState = function() {
             const visible = getVisibleCheckboxes();
             const hasUnchecked = visible.some(cb => !cb.checked);
             fabBtn.disabled = !hasUnchecked;
-          }
+          };
           
           document.querySelectorAll('input[type="checkbox"]').forEach(cb => 
             cb.addEventListener('change', updateFabState)
@@ -1695,9 +1765,10 @@
 
         function performSearch(query) {
           const phases = document.querySelectorAll('.phase');
+          const phaseList = Array.from(phases);
           let hasResults = false;
 
-          phases.forEach(phase => {
+          phaseList.forEach(phase => {
             let phaseHasMatch = false;
             const items = phase.querySelectorAll('.checklist-item, .note, h3, p');
             
@@ -1719,6 +1790,7 @@
                 textNodes.forEach(textNode => {
                   if (textNode.textContent.toLowerCase().includes(query.toLowerCase())) {
                     const span = document.createElement('span');
+                    span.className = 'search-wrap';
                     span.innerHTML = highlightText(textNode.textContent, query);
                     textNode.parentNode.replaceChild(span, textNode);
                   }
@@ -1735,7 +1807,7 @@
             if (query) {
               phase.style.display = phaseHasMatch ? '' : 'none';
               if (phaseHasMatch && phase.classList.contains('collapsed')) {
-                searchState.expanded.add(phase.id || phases.indexOf(phase));
+                searchState.expanded.add(phase.id || phaseList.indexOf(phase));
                 phase.classList.remove('collapsed');
                 const btn = phase.querySelector('.toggle-btn');
                 if (btn) btn.textContent = '−';
@@ -1743,7 +1815,7 @@
             } else {
               phase.style.display = '';
               // Restore previous collapse state
-              const id = phase.id || phases.indexOf(phase);
+              const id = phase.id || phaseList.indexOf(phase);
               if (searchState.expanded.has(id)) {
                 searchState.expanded.delete(id);
                 phase.classList.add('collapsed');
@@ -1757,34 +1829,41 @@
           updateCollapsedPhasesStrip();
         }
 
-        function clearSearch() {
-          // Remove all search highlights
-          document.querySelectorAll('.search-mark').forEach(mark => {
+        function removeSearchHighlights() {
+          // Remove all search highlights and wrappers we added
+          document.querySelectorAll('mark.search-mark').forEach(mark => {
             const parent = mark.parentNode;
             parent.replaceChild(document.createTextNode(mark.textContent), mark);
             parent.normalize();
           });
-          
-          // Remove any wrapper spans
-          document.querySelectorAll('span').forEach(span => {
-            if (!span.className && span.children.length === 0) {
-              const parent = span.parentNode;
-              parent.replaceChild(document.createTextNode(span.textContent), span);
-              parent.normalize();
-            }
+          document.querySelectorAll('span.search-wrap').forEach(span => {
+            const parent = span.parentNode;
+            parent.replaceChild(document.createTextNode(span.textContent), span);
+            parent.normalize();
           });
+        }
 
+        function clearSearch() {
+          removeSearchHighlights();
           performSearch('');
-          searchInput.value = '';
+          if (searchInput) searchInput.value = '';
           searchState.query = '';
         }
 
         if (searchInput && clearBtn) {
+          const debouncedSearch = debounce((val) => {
+            removeSearchHighlights();
+            if (val) {
+              performSearch(val);
+            } else {
+              performSearch('');
+            }
+          }, 200);
+
           searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim();
             searchState.query = query;
-            clearSearch();
-            if (query) performSearch(query);
+            debouncedSearch(query);
           });
 
           clearBtn.addEventListener('click', clearSearch);
@@ -1872,6 +1951,9 @@ B: ${palette.formulas.B}</pre>
               const text = `R: ${formulas.R}\nG: ${formulas.G}\nB: ${formulas.B}`;
               navigator.clipboard.writeText(text).then(() => {
                 copyBtn.textContent = 'Copied!';
+                setTimeout(() => copyBtn.textContent = 'Copy Formulas', 2000);
+              }).catch(() => {
+                copyBtn.textContent = 'Copy failed';
                 setTimeout(() => copyBtn.textContent = 'Copy Formulas', 2000);
               });
             });
@@ -2218,6 +2300,7 @@ B: ${palette.formulas.B}</pre>
         applySession();
         if (nightSel && !nightSel.value) nightSel.value = 'single';
         updatePhaseHeadings();
+        enhanceSteps();
         updateProgress();
         updateCollapsedPhasesStrip();
         onScroll();
